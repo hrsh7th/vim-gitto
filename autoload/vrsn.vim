@@ -1,20 +1,11 @@
 
 function! vrsn#call(fn, args)
-  if !has_key(a:args, 'path')
-    echomsg '`vrsn#call` required `args.path`.'
-    return
-  endif
   return function(printf('vrsn#git#%s#call', a:fn))(a:args)
 endfunction
 
 function! vrsn#root_dir(path)
   let s:path = a:path
   let s:path = finddir('.git', fnamemodify(s:path, ':p:h') . ';')
-
-  if s:path == ''
-    throw printf('`%s` is not valid git path.', a:path)
-  endif
-
   let s:path = fnamemodify(s:path, ':p:h:h')
   return s:path
 endfunction
