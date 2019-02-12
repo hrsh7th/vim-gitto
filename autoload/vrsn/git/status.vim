@@ -2,7 +2,7 @@
 " `git status`
 "
 function! vrsn#git#status#call(args)
-  let s:statuses = vrsn#system('git status --short', versn#root_dir(a:args['path']))
+  let s:statuses = vrsn#system('git status --short', vrsn#root_dir(a:args['path']))
   let s:statuses = s:parse(s:statuses)
   return s:statuses
 endfunction
