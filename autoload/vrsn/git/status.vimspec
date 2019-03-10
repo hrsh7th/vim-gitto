@@ -1,0 +1,18 @@
+let s:expect = themis#helper('expect')
+
+Describe git/status
+  Before all
+    call vrsn#test#set('vrsn#system', [
+          \   'M  vrsn.vim',
+          \   'R  branch.vim -> branch2.vim',
+          \   '?? debug.vim',
+          \ ])
+  End
+
+  It #get
+    let statuses = vrsn#call('status', 'get')
+    call s:expect(len(statuses)).to_equal(3)
+  End
+
+End
+

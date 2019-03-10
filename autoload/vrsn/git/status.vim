@@ -1,19 +1,29 @@
 "
 " `git status`
 "
-function! vrsn#git#status#call(args)
-  let s:statuses = vrsn#system('git status --short', vrsn#root_dir(a:args['path']))
-  let s:statuses = s:parse(s:statuses)
+function! vrsn#git#status#get()
+  let s:statuses = vrsn#system('git status --short')
+  let s:statuses = filter(s:statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
+  let s:statuses = map(s:statuses, { k, v -> s:parse(v) })
   return s:statuses
 endfunction
 
-function! s:parse(statuses)
-  let s:statuses = a:statuses
-  let s:statuses = filter(s:statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
-  return map(s:statuses, { k, v -> {
-        \ 'status': strpart(v, 0, 2),
-        \ 'path': strpart(v, 3),
-        \ 'raw': v
-        \ } })
+" ---
+
+function! s:parse(status)
+  let s:state = strpart(a:status, 0, 2)
+  let s:path = strpart(a:status, 3)
+  return {
+        \ 'status': s:state,
+        \ 'path': fnamemodify(s:parse_path(s:state, s:path), ':p'),
+        \ 'raw': a:status
+        \ }
+endfunction
+
+function! s:parse_path(status, path)
+  if a:status =~# 'R'
+    return split(a:path, ' -> ')[1]
+  endif
+  return a:path
 endfunction
 
