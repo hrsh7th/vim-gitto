@@ -1,0 +1,21 @@
+let s:expect = themis#helper('expect')
+
+Describe gitto#git#changes
+  Before all
+    let g:gitto#config.get_buffer_path = { -> gitto#test#this_project('./') }
+    call gitto#test#set('gitto#system', [
+          \ 'D       .themisrc',
+          \ 'M       autoload/vrsn.vim',
+          \ 'A       test/vrsn/git/status.vim',
+          \ ])
+  End
+
+  It #get
+    let changes = gitto#call('changes', 'get', 'HEAD', 'HEAD^')
+    call s:expect(changes.from).to_equal('HEAD')
+    call s:expect(changes.to).to_equal('HEAD^')
+    call s:expect(changes.statuses).to_have_length(3)
+  End
+
+End
+

@@ -1,0 +1,33 @@
+let s:expect = themis#helper('expect')
+
+Describe gitto#git#log
+  Before all
+    let g:gitto#config.get_buffer_path = { -> gitto#test#this_project('./') }
+    call gitto#test#set('gitto#system', [
+          \ '843e7a3bfc99e523713fbe48bec4391dd1d467e9	b4ab7857f8bd3d9e0b62bca8d7cf388c206027b7	hrsh7th	hrsh7th@gmail.com	2019-03-10 19:30:19 +0900	Second commit',
+          \ 'b2b177b1c749902a8a590d8a67d08de2063394ee		hrsh7th	hrsh7th@gmail.com	2019-02-13 00:48:40 +0900	First commit',
+          \ ])
+  End
+
+  It #get
+    let logs = gitto#call('log', 'get', {})
+    call s:expect(logs).to_have_length(2)
+
+    call s:expect(logs[0].subject).to_equal('Second commit')
+    call s:expect(logs[0].commit_hash).to_equal('843e7a3bfc99e523713fbe48bec4391dd1d467e9')
+    call s:expect(logs[0].parent_hashes).to_have_length(1)
+    call s:expect(logs[0].parent_hashes[0]).to_equal('b4ab7857f8bd3d9e0b62bca8d7cf388c206027b7')
+    call s:expect(logs[0].author_name).to_equal('hrsh7th')
+    call s:expect(logs[0].author_email).to_equal('hrsh7th@gmail.com')
+    call s:expect(logs[0].author_date).to_equal('2019-03-10 19:30:19 +0900')
+
+    call s:expect(logs[1].subject).to_equal('First commit')
+    call s:expect(logs[1].commit_hash).to_equal('b2b177b1c749902a8a590d8a67d08de2063394ee')
+    call s:expect(logs[1].parent_hashes).to_have_length(0)
+    call s:expect(logs[1].author_name).to_equal('hrsh7th')
+    call s:expect(logs[1].author_email).to_equal('hrsh7th@gmail.com')
+    call s:expect(logs[1].author_date).to_equal('2019-02-13 00:48:40 +0900')
+  End
+
+End
+

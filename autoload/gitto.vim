@@ -1,33 +1,35 @@
-function! s:get_buffer_path()
-  return expand('%:p')
+let g:gitto#config = get(g:, 'gitto#config', {})
+let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { -> expand('%:p')})
+
+function! gitto#call(namespace, name, ...)
+  let s:fn = function(printf('gitto#git#%s#%s', a:namespace, a:name), [] + a:000)
+  return s:run_in_dir(gitto#root_dir(g:gitto#config.get_buffer_path()), s:fn)
 endfunction
 
-let g:vrsn#config = get(g:, 'vrsn#config', {})
-let g:vrsn#config.get_buffer_path = get(g:vrsn#config, 'get_buffer_path', function('s:get_buffer_path'))
-
-function! vrsn#call(namespace, name, ...)
-  let s:fn = len(a:000)
-        \ ? function(printf('vrsn#git#%s#%s', a:namespace, a:name), a:000)
-        \ : function(printf('vrsn#git#%s#%s', a:namespace, a:name))
-  return s:run_in_dir(vrsn#root_dir(g:vrsn#config.get_buffer_path()), s:fn)
-endfunction
-
-function! vrsn#root_dir(path)
+function! gitto#root_dir(path)
   let s:path = a:path
   let s:path = finddir('.git', fnamemodify(s:path, ':p:h') . ';')
   let s:path = strlen(s:path) ? fnamemodify(s:path, ':p:h:h') : ''
   return s:path
 endfunction
 
-function! vrsn#system(cmd)
-  if vrsn#test#has('vrsn#system')
-    return vrsn#test#get('vrsn#system')
+function! gitto#system(cmd, ...)
+  if gitto#test#has('gitto#system')
+    return gitto#test#get('gitto#system')
   endif
 
-  let s:output = split(system(printf('%s', a:cmd)), "\n")
+  let s:output = split(system(function('printf', [a:cmd] + a:000)()), "\n")
   let s:output = map(s:output, 's:chomp(v:val)')
   let s:output = filter(s:output, 'strlen(v:val)')
   return s:output
+endfunction
+
+function! gitto#system_raw(cmd, ...)
+  if gitto#test#has('gitto#system_raw')
+    return gitto#test#get('gitto#system_raw')
+  endif
+
+  return system(function('printf', [a:cmd] + a:000)())
 endfunction
 
 function! s:run_in_dir(cwd, Fn)

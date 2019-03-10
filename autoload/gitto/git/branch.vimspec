@@ -1,8 +1,8 @@
 let s:expect = themis#helper('expect')
 
-Describe vrsn#git#branch
+Describe gitto#git#branch
   Before all
-    call vrsn#test#set('vrsn#system', [
+    call gitto#test#set('gitto#system', [
           \   '* branch-name',
           \   '  remotes/origin/HEAD -> origin/branch',
           \   '  remotes/origin/branch',
@@ -10,8 +10,8 @@ Describe vrsn#git#branch
   End
 
   It #get
-    let branches = vrsn#call('branch', 'get')
-    call s:expect(len(branches)).to_equal(2)
+    let branches = gitto#call('branch', 'get')
+    call s:expect(branches).to_have_length(2)
     call s:expect(branches[0]['name']).to_equal('branch-name')
     call s:expect(branches[1]['name']).to_equal('origin/branch')
   End
