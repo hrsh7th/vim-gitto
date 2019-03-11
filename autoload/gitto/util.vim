@@ -22,6 +22,10 @@ function! s:U.or(v1, v2)
   return strlen(a:v1) ? a:v1 : a:v2
 endfunction
 
+function! s:U.chomp(s)
+  return substitute(a:s, '\(\r\|\n\)*$', '', 'g')
+endfunction
+
 "
 " status
 "

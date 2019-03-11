@@ -1,11 +1,16 @@
 let g:gitto#config = get(g:, 'gitto#config', {})
 let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { -> expand('%:p')})
 
+let s:U = gitto#util#get()
+
 function! gitto#do(name)
   let s:fn = function(printf('gitto#git#%s', a:name))
-  return { -> s:run_in_dir(
+  function! s:do(...)
+    return s:run_in_dir(
         \ gitto#root_dir(g:gitto#config.get_buffer_path()),
-        \ function(s:fn, [] + a:000)) }
+        \ function(s:fn, [] + a:000))
+  endfunction
+  return function('s:do')
 endfunction
 
 function! gitto#root_dir(path)
@@ -21,8 +26,8 @@ function! gitto#system(cmd, ...)
   endif
 
   let s:output = split(system(function('printf', [a:cmd] + a:000)()), "\n")
-  let s:output = map(s:output, 's:chomp(v:val)')
-  let s:output = filter(s:output, 'strlen(v:val)')
+  let s:output = map(s:output, { k, v -> s:U.chomp(v) })
+  let s:output = filter(s:output, { k, v -> strlen(v) })
   return s:output
 endfunction
 
@@ -45,12 +50,8 @@ function! s:run_in_dir(cwd, Fn)
   return s:return
 endfunction
 
-function! s:chomp(s)
-  return substitute(a:s, '\r\|\n', '', 'g')
-endfunction
-
 function! s:lcd(dir)
-  execute printf('lcd %s', a:dir)
+  execute printf('lcd %s', s:dir(a:dir))
 endfunction
 
 function! s:dir(path)
