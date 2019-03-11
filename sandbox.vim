@@ -1,6 +1,6 @@
 call gitto#root_dir()
 
-let s:mode = input('choose(status, branc, log, add, reset, commit): ')
+let s:mode = input('choose(status, branch, branch/new, branch/rename, branch/checkout, log, add, reset, commit): ')
 let g:gitto#config.debug = 1
 
 " status
@@ -15,6 +15,21 @@ if s:mode ==# 'branch'
   for s:branch in gitto#do('branch#get')()
     echomsg s:branch.remote . ' | ' . s:branch.name
   endfor
+endif
+
+" branch/new
+if s:mode ==# 'branch/new'
+  call gitto#do('branch#new')(input('newname: '))
+endif
+
+" branch/rename
+if s:mode ==# 'branch/rename'
+  call gitto#do('branch#rename')(input('target: '), input('newname: '))
+endif
+
+" branch/checkout
+if s:mode ==# 'branch/checkout'
+  call gitto#do('branch#rename')(input('target: '), input('newname: '))
 endif
 
 " log
