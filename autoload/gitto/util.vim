@@ -11,7 +11,9 @@ function! s:U.autoload(fname)
     let s:file = a:fname
     let s:file = substitute(s:file, '#', '/', 'g')
     let s:file = substitute(s:file, '/[^/]*$', '.vim', 'g')
-    execute printf('source %s/%s', s:sdir, s:file)
+    if filereadable(s:file)
+      execute printf('source %s/%s', s:sdir, s:file)
+    endif
   endif
 endfunction
 
