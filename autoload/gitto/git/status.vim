@@ -43,6 +43,6 @@ endfunction
 
 function! s:per_status(action, paths, opts)
   let s:paths = map(s:U.to_list(a:paths), { k, v -> s:U.relative(v) })
-  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, s:U.opts(a:opts), join(s:paths, ' ')))
+  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, a:opts, s:paths))
 endfunction
 

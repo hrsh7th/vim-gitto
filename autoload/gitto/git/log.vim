@@ -21,7 +21,7 @@ function! gitto#git#log#get(...)
         \   '--pretty': 'format:"%H%x09%P%x09%an%x09%ae%x09%ai%x09%s"'
         \ }))
 
-  let s:logs = gitto#system('git log %s', s:U.opts(s:opts))
+  let s:logs = gitto#system('git log %s', s:opts)
   let s:logs = map(s:logs, { k, v -> s:U.combine(s:columns, split(v, "\t")) })
   return s:logs
 endfunction

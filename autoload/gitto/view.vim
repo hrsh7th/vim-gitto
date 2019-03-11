@@ -10,7 +10,7 @@ function! gitto#view#commit(paths)
 
   let s:root_dir = gitto#root_dir()
   let s:msg_file = join([s:root_dir, '.git', 'COMMIT_EDITMSG'], '/')
-  let s:paths = map(a:paths, { k, v -> s:U.escape(s:U.relative(v, s:root_dir)) })
+  let s:paths = map(a:paths, { k, v -> s:U.relative(v, s:root_dir) })
 
   call s:U.exec('tabedit %s', s:msg_file)
   call s:U.exec('set filetype=gitcommit')
@@ -18,7 +18,7 @@ function! gitto#view#commit(paths)
   silent % delete _
 
   put=g:gitto#view#config.commit_msg_separator
-  put=s:U.run_in_dir(s:root_dir, { -> gitto#system('git commit --dry-run --quiet -v -- %s', join(s:paths, ' ')) })
+  put=s:U.run_in_dir(s:root_dir, { -> gitto#system('git commit --dry-run --quiet -v -- %s', s:paths) })
   noautocmd write!
 
   call cursor(1, 1)
@@ -32,7 +32,7 @@ function! gitto#view#commit(paths)
     function! s:commit()
       if s:U.yes_or_no('commit?')
         call s:U.echomsgs(
-              \   s:U.run_in_dir(s:root_dir, { -> gitto#system('git commit -F %s -- %s', s:msg_file, join(s:paths, ' ')) })
+              \   s:U.run_in_dir(s:root_dir, { -> gitto#system('git commit -F %s -- %s', s:msg_file, s:paths) })
               \ )
       endif
       bdelete!

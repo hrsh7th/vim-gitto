@@ -1,17 +1,19 @@
 let g:gitto#config = get(g:, 'gitto#config', {})
-let g:gitto#config.get_buffer_path = get(g:, 'gitto#config.get_buffer_path', { -> expand('%:p')})
+let g:gitto#config.get_buffer_path = get(g:, 'gitto#config.get_buffer_path', { -> expand('%:p') })
 let g:gitto#config.debug = get(g:, 'gitto#config.debug', 0)
 
 let s:U = gitto#util#get()
 
 function! gitto#do(name)
-  let s:fn = function(printf('gitto#git#%s', a:name))
+  let s:fname = printf('gitto#git#%s', a:name)
   function! s:do(...)
+    call s:U.autoload(s:fname)
     return s:U.run_in_dir(
-        \ gitto#root_dir(g:gitto#config.get_buffer_path()),
-        \ function(s:fn, [] + a:000))
+        \   gitto#root_dir(g:gitto#config.get_buffer_path()),
+        \   funcref(s:fname, [] + a:000)
+        \ )
   endfunction
-  return function('s:do')
+  return funcref('s:do', [])
 endfunction
 
 function! gitto#root_dir(...)
@@ -26,7 +28,7 @@ function! gitto#system(cmd, ...)
     return gitto#test#get('gitto#system')
   endif
 
-  let s:cmd = function('printf', [a:cmd] + a:000)()
+  let s:cmd = function('printf', [a:cmd] + s:U.shellargs(a:000))()
   if g:gitto#config.debug
     echomsg s:cmd
   endif

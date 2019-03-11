@@ -12,12 +12,14 @@ endif
 
 " add
 if s:mode ==# 'add'
-  call gitto#do('status#add')(map(gitto#do('status#get')(), { k, v -> v.path }))
+  let s:paths = map(gitto#do('status#get')(), { k, v -> v.path })
+  call gitto#do('status#add')(s:paths)
 endif
 
 " reset
 if s:mode ==# 'reset'
-  call gitto#do('status#reset')(map(gitto#do('status#get')(), { k, v -> v.path }))
+  let s:paths = map(gitto#do('status#get')(), { k, v -> v.path })
+  call gitto#do('status#reset')(s:paths)
 endif
 
 " commit

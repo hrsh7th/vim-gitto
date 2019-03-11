@@ -1,8 +1,19 @@
+let s:sdir = expand('<sfile>:p:h:h')
+
 let s:U = {}
 
 "
 " common
 "
+
+function! s:U.autoload(fname)
+  if !exists('*' . a:fname)
+    let s:file = a:fname
+    let s:file = substitute(s:file, '#', '/', 'g')
+    let s:file = substitute(s:file, '/[^/]*$', '.vim', 'g')
+    execute printf('source %s/%s', s:sdir, s:file)
+  endif
+endfunction
 
 " run_in_dir
 function! s:U.run_in_dir(dir, fn)
@@ -40,13 +51,24 @@ endfunction
 
 " exec
 function! s:U.exec(cmd, ...)
-  call gitto#test#log(a:cmd)
   return execute(function('printf', [a:cmd] + a:000)())
 endfunction
 
 " escape
-function! s:U.escape(arg)
-  return escape(a:arg, ' ')
+function! s:U.shellargs(args)
+  let s:args = []
+  for s:arg in s:U.to_list(a:args)
+    if type(s:arg) == v:t_list
+      let s:args = s:args + [join(map(s:arg, { k, v -> escape(v, ' ') }), ' ')]
+      continue
+    endif
+    if type(s:arg) == v:t_dict
+      let s:args = s:args + [s:U.opts(s:arg)]
+      continue
+    endif
+    call add(s:args, s:arg)
+  endfor
+  return s:args
 endfunction
 
 " combine
