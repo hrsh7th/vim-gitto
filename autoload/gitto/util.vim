@@ -16,8 +16,8 @@ function! s:U.run_in_dir(dir, fn)
   return s:return
 endfunction
 
-function! s:U.relative(path)
-  return fnamemodify(a:path, ':.')
+function! s:U.relative(path, ...)
+  return s:U.run_in_dir(get(a:000, 0, getcwd()), { -> fnamemodify(a:path, ':.')})
 endfunction
 
 " choose yes/no
@@ -32,8 +32,7 @@ endfunction
 
 " echomsgs
 function! s:U.echomsgs(msgs)
-  let s:msgs = type(a:msgs) == v:t_list ? a:msgs : [' ', a:msgs]
-  for s:msg in s:msgs
+  for s:msg in s:U.to_list(a:msgs)
     echomsg s:msg
   endfor
   call input('')
@@ -45,12 +44,9 @@ function! s:U.exec(cmd, ...)
   return execute(function('printf', [a:cmd] + a:000)())
 endfunction
 
-" path
-function! s:U.shellescape(arg)
-  if type(a:arg) == v:t_list
-    return map(a:arg, { k, v -> shellescape(v) })
-  endif
-  return shellescape(a:arg)
+" escape
+function! s:U.escape(arg)
+  return escape(a:arg, ' ')
 endfunction
 
 " combine
@@ -67,7 +63,23 @@ endfunction
 
 " opts
 function! s:U.opts(opts)
-  return join(map(items(a:opts), { k, v -> strlen(v[1]) ? v[0] . '=' . v[1] : v[0] }), ' ')
+  let s:args = []
+  for [s:k, s:v] in items(a:opts)
+    if type(s:v) == v:t_bool && s:v
+      call add(s:args, s:k)
+    else
+      call add(s:args, s:k . '=' . s:v)
+    endif
+  endfor
+  return join(s:args, ' ')
+endfunction
+
+" to_list
+function! s:U.to_list(v)
+  if type(a:v) == v:t_list
+    return a:v
+  endif
+  return [a:v]
 endfunction
 
 " or

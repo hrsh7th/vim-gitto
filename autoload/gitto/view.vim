@@ -8,23 +8,21 @@ function! gitto#view#commit(paths)
     return s:U.echomsgs('nothing to commit')
   endif
 
-  let s:paths = s:U.shellescape(a:paths)
   let s:root_dir = gitto#root_dir()
   let s:msg_file = join([s:root_dir, '.git', 'COMMIT_EDITMSG'], '/')
+  let s:paths = map(a:paths, { k, v -> s:U.escape(s:U.relative(v, s:root_dir)) })
 
-
-  " open buffer.
   call s:U.exec('tabedit %s', s:msg_file)
   call s:U.exec('set filetype=gitcommit')
 
-  " init buffer.
   silent % delete _
+
   put=g:gitto#view#config.commit_msg_separator
   put=s:U.run_in_dir(s:root_dir, { -> gitto#system('git commit --dry-run --quiet -v -- %s', join(s:paths, ' ')) })
   noautocmd write!
+
   call cursor(1, 1)
 
-  " init events.
   augroup gitto
     autocmd!
     autocmd! BufWinEnter <buffer> setlocal bufhidden=wipe nobuflisted noswapfile

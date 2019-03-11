@@ -15,7 +15,7 @@ let s:columns = [
 function! gitto#git#log#get(...)
   let s:opts = extend({
         \   '--max-count': 100,
-        \   '--first-parent': ''
+        \   '--first-parent': v:true
         \ },
         \ extend(get(a:000, 0, {}), {
         \   '--pretty': 'format:"%H%x09%P%x09%an%x09%ae%x09%ai%x09%s"'
