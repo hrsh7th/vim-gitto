@@ -29,7 +29,7 @@ endif
 
 " branch/checkout
 if s:mode ==# 'branch/checkout'
-  call gitto#do('branch#rename')(input('target: '), input('newname: '))
+  call gitto#do('branch#checkout')(input('target: '))
 endif
 
 " log

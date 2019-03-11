@@ -14,7 +14,7 @@ endfunction
 " `git checkout %s`
 "
 function! gitto#git#branch#checkout(name)
-  let s:branches = gitto#do('branch')()
+  let s:branches = gitto#do('branch#get')()
   let s:exists = len(filter(s:branches, { k, v -> v.name == a:name }))
   if s:exists
     call s:U.echomsgs(gitto#system('git checkout %s', a:name))

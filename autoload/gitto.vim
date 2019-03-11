@@ -9,14 +9,12 @@ function! gitto#do(name)
 
   call s:U.autoload_by_funcname(s:fname)
 
-  function! s:do(fname, ...)
-    return s:U.run_in_dir(
-          \   gitto#root_dir(g:gitto#config.get_buffer_path()),
-          \   funcref(a:fname, a:000)
-          \ )
-  endfunction
-
-  return funcref('s:do', [s:fname])
+  return { ->
+        \   s:U.run_in_dir(
+        \     gitto#root_dir(g:gitto#config.get_buffer_path()),
+        \     funcref(s:fname, a:000)
+        \   )
+        \ }
 endfunction
 
 function! gitto#root_dir(...)
