@@ -1,9 +1,11 @@
 let g:gitto#config = get(g:, 'gitto#config', {})
 let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { -> expand('%:p')})
 
-function! gitto#call(namespace, name, ...)
-  let s:fn = function(printf('gitto#git#%s#%s', a:namespace, a:name), [] + a:000)
-  return s:run_in_dir(gitto#root_dir(g:gitto#config.get_buffer_path()), s:fn)
+function! gitto#do(name)
+  let s:fn = function(printf('gitto#git#%s', a:name))
+  return { -> s:run_in_dir(
+        \ gitto#root_dir(g:gitto#config.get_buffer_path()),
+        \ function(s:fn, [] + a:000)) }
 endfunction
 
 function! gitto#root_dir(path)

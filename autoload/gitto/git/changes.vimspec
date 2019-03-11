@@ -11,7 +11,7 @@ Describe gitto#git#changes
   End
 
   It #get
-    let changes = gitto#call('changes', 'get', 'HEAD', 'HEAD^')
+    let changes = gitto#do('changes#get')('HEAD', 'HEAD^')
     call s:expect(changes.from).to_equal('HEAD')
     call s:expect(changes.to).to_equal('HEAD^')
     call s:expect(changes.statuses).to_have_length(3)

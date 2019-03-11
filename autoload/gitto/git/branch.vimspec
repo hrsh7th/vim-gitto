@@ -10,7 +10,7 @@ Describe gitto#git#branch
   End
 
   It #get
-    let branches = gitto#call('branch', 'get')
+    let branches = gitto#do('branch#get')()
     call s:expect(branches).to_have_length(2)
     call s:expect(branches[0]['name']).to_equal('branch-name')
     call s:expect(branches[1]['name']).to_equal('origin/branch')
