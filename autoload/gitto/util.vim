@@ -6,13 +6,14 @@ let s:U = {}
 " common
 "
 
-function! s:U.autoload(fname)
+function! s:U.autoload_by_funcname(fname)
   if !exists('*' . a:fname)
     let s:file = a:fname
     let s:file = substitute(s:file, '#', '/', 'g')
     let s:file = substitute(s:file, '/[^/]*$', '.vim', 'g')
+    let s:file = printf('%s/%s', s:sdir, s:file)
     if filereadable(s:file)
-      execute printf('source %s/%s', s:sdir, s:file)
+      execute printf('source %s', s:file)
     endif
   endif
 endfunction

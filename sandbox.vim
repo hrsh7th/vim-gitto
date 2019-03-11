@@ -1,6 +1,6 @@
 call gitto#root_dir()
 
-let s:mode = 'commit'
+let s:mode = input('choose(status, add, reset, commit): ')
 let g:gitto#config.debug = 1
 
 " status
