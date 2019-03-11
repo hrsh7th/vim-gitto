@@ -28,7 +28,7 @@ function! gitto#view#commit(paths)
   augroup gitto
     autocmd!
     autocmd! BufWinEnter <buffer> setlocal bufhidden=wipe nobuflisted noswapfile
-    autocmd! BufWritePre <buffer> execute '%s/' . g:gitto#view#config.commit_msg_separator . '\_.*//g'
+    autocmd! BufWritePre <buffer> execute 'silent %s/' . escape(g:gitto#view#config.commit_msg_separator, '[]') . '\_.*//ge'
     autocmd! BufWritePost <buffer> call s:commit()
 
     function! s:commit()
