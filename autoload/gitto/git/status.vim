@@ -43,6 +43,9 @@ endfunction
 
 function! s:per_status(action, paths, opts)
   let s:paths = map(s:U.to_list(a:paths), { k, v -> s:U.relative(v) })
+  if !len(s:paths)
+    return s:U.echomsgs(printf('nothing to %s', a:action))
+  endif
   call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, a:opts, s:paths))
 endfunction
 
