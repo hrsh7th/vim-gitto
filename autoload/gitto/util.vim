@@ -16,6 +16,10 @@ function! s:U.run_in_dir(dir, fn)
   return s:return
 endfunction
 
+function! s:U.relative(path)
+  return fnamemodify(a:path, ':.')
+endfunction
+
 " choose yes/no
 function! s:U.yes_or_no(msg)
   let s:choose = input(a:msg . '(yes/no): ')

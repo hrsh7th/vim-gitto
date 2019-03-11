@@ -1,5 +1,6 @@
 let g:gitto#config = get(g:, 'gitto#config', {})
-let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { -> expand('%:p')})
+let g:gitto#config.get_buffer_path = get(g:, 'gitto#config.get_buffer_path', { -> expand('%:p')})
+let g:gitto#config.debug = get(g:, 'gitto#config.debug', 0)
 
 let s:U = gitto#util#get()
 
@@ -25,7 +26,11 @@ function! gitto#system(cmd, ...)
     return gitto#test#get('gitto#system')
   endif
 
-  let s:output = split(system(function('printf', [a:cmd] + a:000)()), "\n")
+  let s:cmd = function('printf', [a:cmd] + a:000)()
+  if g:gitto#config.debug
+    echomsg s:cmd
+  endif
+  let s:output = split(system(s:cmd), "\n")
   let s:output = map(s:output, { k, v -> s:U.chomp(v) })
   return s:output
 endfunction

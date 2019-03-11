@@ -14,24 +14,21 @@ endfunction
 " `git reset`
 "
 function! gitto#git#status#reset(path, ...)
-  let s:opts = get(a:000, 0, {})
-  call s:U.echomsgs(gitto#system('git reset %s -- %s', s:U.opts(s:opts), a:path))
+  call s:per_status('reset', a:path, get(a:000, 0, {}))
 endfunction
 
 "
 " `git add`
 "
 function! gitto#git#status#add(path, ...)
-  let s:opts = get(a:000, 0, {})
-  call s:U.echomsgs(gitto#system('git add %s -- %s', s:U.opts(s:opts), a:path))
+  call s:per_status('add', a:path, get(a:000, 0, {}))
 endfunction
 
 "
 " `git rm`
 "
-function! gitto#git#status#add(path, ...)
-  let s:opts = get(a:000, 0, {})
-  call s:U.echomsgs(gitto#system('git rm %s -- %s', s:U.opts(s:opts), a:path))
+function! gitto#git#status#rm(path, ...)
+  call s:per_status('rm', a:path, get(a:000, 0, {}))
 endfunction
 
 
@@ -39,7 +36,12 @@ endfunction
 " `git checkout`
 "
 function! gitto#git#status#checkout(path, ...)
-  let s:opts = get(a:000, 0, {})
-  call s:U.echomsgs(gitto#system('git checkout %s -- %s', s:U.opts(s:opts), a:path))
+  call s:per_status('checkout', a:path, get(a:000, 0, {}))
+endfunction
+
+" ---
+
+function! s:per_status(action, path, opts)
+  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, s:U.opts(a:opts), s:U.relative(a:path)))
 endfunction
 
