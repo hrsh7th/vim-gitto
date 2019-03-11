@@ -6,15 +6,15 @@ let s:U = gitto#util#get()
 function! gitto#do(name)
   let s:fn = function(printf('gitto#git#%s', a:name))
   function! s:do(...)
-    return s:run_in_dir(
+    return s:U.run_in_dir(
         \ gitto#root_dir(g:gitto#config.get_buffer_path()),
         \ function(s:fn, [] + a:000))
   endfunction
   return function('s:do')
 endfunction
 
-function! gitto#root_dir(path)
-  let s:path = a:path
+function! gitto#root_dir(...)
+  let s:path = get(a:000, 0, g:gitto#config.get_buffer_path())
   let s:path = finddir('.git', fnamemodify(s:path, ':p:h') . ';')
   let s:path = strlen(s:path) ? fnamemodify(s:path, ':p:h:h') : ''
   return s:path
@@ -27,36 +27,6 @@ function! gitto#system(cmd, ...)
 
   let s:output = split(system(function('printf', [a:cmd] + a:000)()), "\n")
   let s:output = map(s:output, { k, v -> s:U.chomp(v) })
-  let s:output = filter(s:output, { k, v -> strlen(v) })
   return s:output
 endfunction
 
-function! gitto#system_raw(cmd, ...)
-  if gitto#test#has('gitto#system_raw')
-    return gitto#test#get('gitto#system_raw')
-  endif
-
-  return system(function('printf', [a:cmd] + a:000)())
-endfunction
-
-function! s:run_in_dir(cwd, Fn)
-  let s:cwd = getcwd()
-  try
-    call s:lcd(a:cwd)
-    let s:return = a:Fn()
-  finally
-    call s:lcd(s:cwd)
-  endtry
-  return s:return
-endfunction
-
-function! s:lcd(dir)
-  execute printf('lcd %s', s:dir(a:dir))
-endfunction
-
-function! s:dir(path)
-  if !isdirectory(a:path)
-    return fnamemodify(a:path, 'p:h')
-  endif
-  return a:path
-endfunction

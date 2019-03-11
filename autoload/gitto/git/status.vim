@@ -15,7 +15,7 @@ endfunction
 "
 function! gitto#git#status#reset(path, ...)
   let s:opts = get(a:000, 0, {})
-  echomsg gitto#system_raw('git reset %s -- %s', s:U.opts(s:opts), a:path)
+  call s:U.echomsgs(gitto#system('git reset %s -- %s', s:U.opts(s:opts), a:path))
 endfunction
 
 "
@@ -23,7 +23,7 @@ endfunction
 "
 function! gitto#git#status#add(path, ...)
   let s:opts = get(a:000, 0, {})
-  echomsg gitto#system_raw('git add %s -- %s', s:U.opts(s:opts), a:path)
+  call s:U.echomsgs(gitto#system('git add %s -- %s', s:U.opts(s:opts), a:path))
 endfunction
 
 "
@@ -31,7 +31,7 @@ endfunction
 "
 function! gitto#git#status#add(path, ...)
   let s:opts = get(a:000, 0, {})
-  echomsg gitto#system_raw('git rm %s -- %s', s:U.opts(s:opts), a:path)
+  call s:U.echomsgs(gitto#system('git rm %s -- %s', s:U.opts(s:opts), a:path))
 endfunction
 
 
@@ -40,6 +40,6 @@ endfunction
 "
 function! gitto#git#status#checkout(path, ...)
   let s:opts = get(a:000, 0, {})
-  echomsg gitto#system_raw('git checkout %s -- %s', s:U.opts(s:opts), a:path)
+  call s:U.echomsgs(gitto#system('git checkout %s -- %s', s:U.opts(s:opts), a:path))
 endfunction
 
