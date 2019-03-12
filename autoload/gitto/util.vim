@@ -53,9 +53,14 @@ endfunction
 
 " echomsgs
 function! s:U.echomsgs(msgs)
+  let output = 0
   for msg in s:U.to_list(a:msgs)
+    let output = output || match(msg, '[^[:blank:]]') >= 0
     echomsg msg
   endfor
+  if output
+    call input('')
+  endif
 endfunction
 
 " exec
