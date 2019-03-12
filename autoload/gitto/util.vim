@@ -100,7 +100,7 @@ endfunction
 function! s:U.opts(opts)
   let args = []
   for [k, v] in items(a:opts)
-    if type(v) == v:t_bool && s:v
+    if type(v) == v:t_bool && v
       call add(args, k)
     else
       call add(args, k . '=' . v)
