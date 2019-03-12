@@ -4,10 +4,10 @@ let s:U = gitto#util#get()
 " `git status`
 "
 function! gitto#git#status#get()
-  let s:statuses = gitto#system('git status --short')
-  let s:statuses = filter(s:statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
-  let s:statuses = map(s:statuses, { k, v -> s:U.status.parse(v) })
-  return s:statuses
+  let statuses = gitto#system('git status --short')
+  let statuses = filter(statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
+  let statuses = map(statuses, { k, v -> s:U.status.parse(v) })
+  return statuses
 endfunction
 
 "
@@ -42,10 +42,10 @@ endfunction
 " ---
 
 function! s:per_status(action, paths, opts)
-  let s:paths = map(s:U.to_list(a:paths), { k, v -> s:U.relative(v) })
-  if !len(s:paths)
+  let paths = map(s:U.to_list(a:paths), { k, v -> s:U.relative(v) })
+  if !len(paths)
     return s:U.echomsgs(printf('nothing to %s', a:action))
   endif
-  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, a:opts, s:paths))
+  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, a:opts, paths))
 endfunction
 

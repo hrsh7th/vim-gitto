@@ -17,10 +17,6 @@ function! gitto#test#clear()
   let s:test = {}
 endfunction
 
-function! gitto#test#log(v)
-  call writefile([json_encode(a:v)], expand('~/log.txt'), 'a')
-endfunction
-
 function! gitto#test#this_project(path)
   return resolve(fnamemodify(fnamemodify(s:sdir, ':p:h:h:h') . '/' . a:path, ''))
 endfunction
