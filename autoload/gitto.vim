@@ -1,6 +1,6 @@
 let g:gitto#config = get(g:, 'gitto#config', {})
-let g:gitto#config.get_buffer_path = get(g:, 'gitto#config.get_buffer_path', { -> expand('%:p') })
-let g:gitto#config.debug = get(g:, 'gitto#config.debug', 0)
+let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { -> expand('%:p') })
+let g:gitto#config.debug = get(g:gitto#config, 'debug', 0)
 
 let s:U = gitto#util#get()
 

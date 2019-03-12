@@ -1,7 +1,7 @@
 let s:U = gitto#util#get()
 
-let g:gitto#view#config = get(g:, 'gitto#view', {})
-let g:gitto#view#config.commit_msg_separator = get(g:, 'gitto#view#config.commit_msg_separator', '#####')
+let g:gitto#view#config = get(g:, 'gitto#view#config', {})
+let g:gitto#view#config.commit_msg_separator = get(g:gitto#view#config, 'commit_msg_separator', '#####')
 
 function! gitto#view#commit(paths)
   if len(a:paths) <= 0

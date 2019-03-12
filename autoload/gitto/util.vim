@@ -56,7 +56,6 @@ function! s:U.echomsgs(msgs)
   for msg in s:U.to_list(a:msgs)
     echomsg msg
   endfor
-  call input('')
 endfunction
 
 " exec
