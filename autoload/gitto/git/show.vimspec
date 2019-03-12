@@ -1,0 +1,27 @@
+let s:expect = themis#helper('expect')
+
+Describe gitto#git#show
+  Before all
+    let g:gitto#config.get_buffer_path = { -> gitto#test#plugin_dir('./') }
+    call gitto#test#set('gitto#system', [
+          \ "call gitto#root_dir()",
+          \ "",
+          \ "let s:mode = input('choose(status, branch, branch/new, branch/rename, branch/checkout, log, add, reset, commit): ')",
+          \ "let g:gitto#config.debug = 1",
+          \ "",
+          \ "\" status",
+          \ "if s:mode ==# 'status'",
+          \ "  for s:status in gitto#do('status#get')()",
+          \ "    echomsg s:status.status . ' | ' . s:status.path",
+          \ "  endfor",
+          \ "endif",
+          \ ])
+  End
+
+  It #get
+    let lines = gitto#do('show#get')('path', 'hash')
+    call s:expect(lines).to_have_length(11)
+  End
+
+End
+

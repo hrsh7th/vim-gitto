@@ -37,7 +37,7 @@ function! gitto#view#commit(paths)
   noautocmd write!
   call cursor(1, 1)
 
-  augroup gitto
+  augroup gitto_commit
     autocmd!
     autocmd! BufWinEnter <buffer> setlocal bufhidden=wipe nobuflisted noswapfile
     autocmd! BufWritePre <buffer> execute 'silent %s/' . g:gitto#view#config.commit_msg_separator . '\_.*$//ge'
@@ -45,6 +45,43 @@ function! gitto#view#commit(paths)
   augroup END
 endfunction
 
-function! gitto#view#vimdiff(info1, info2)
+function! gitto#view#diff_file_with_hash(path, info)
+  if !filereadable(a:path)
+    return s:U.echomsgs(printf('`%s` is not found.', a:path))
+  endif
+
+  let content = gitto#do('show#get')(a:info.hash, a:info.path)
+
+  call s:U.exec('tabedit %s', a:path)
+  diffthis
+
+  vnew
+  put!=content
+  $delete
+  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
+  diffthis
+
+  silent! wincmd p
+endfunction
+
+function! gitto#view#diff_hash_with_hash(info1, info2)
+  let content1 = gitto#do('show#get')(a:info1.hash, a:info1.path)
+  let content2 = gitto#do('show#get')(a:info2.hash, a:info2.path)
+
+  " content1
+  tabnew
+  put!=content1
+  $delete
+  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
+  diffthis
+
+  " content2
+  vnew
+  put!=content2
+  $delete
+  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
+  diffthis
+
+  silent! wincmd p
 endfunction
 

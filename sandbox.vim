@@ -1,7 +1,9 @@
-call gitto#root_dir()
+let s:mode = input('choose(show, status, branch, branch/new, branch/rename, branch/checkout, log, add, reset, commit): ')
 
-let s:mode = input('choose(status, branch, branch/new, branch/rename, branch/checkout, log, add, reset, commit): ')
-let g:gitto#config.debug = 1
+" show
+if s:mode ==# 'show'
+  put!=PP(gitto#do('show#get')('master', expand('%:p')))
+endif
 
 " status
 if s:mode ==# 'status'
