@@ -31,11 +31,17 @@ function! s:U.run_in_dir(dir, fn)
   return output
 endfunction
 
+" relative
 function! s:U.relative(path, ...)
-  return s:U.run_in_dir(get(a:000, 0, getcwd()), { -> fnamemodify(a:path, ':.')})
+  return s:U.run_in_dir(get(a:000, 0, getcwd()), { -> fnamemodify(a:path, ':.') })
 endfunction
 
-" choose yes/no
+" absolute
+function! s:U.absolute(path, ...)
+  return resolve(get(a:000, 0, getcwd()) . '/' . a:path)
+endfunction
+
+" yes_or_no
 function! s:U.yes_or_no(msg)
   let choose = input(a:msg . '(yes/no): ')
   echomsg ' '
@@ -123,12 +129,12 @@ endfunction
 let s:U.status = {}
 
 " status.parse
-function! s:U.status.parse(line)
+function! s:U.status.parse(line, path_offset)
   let status = strpart(a:line, 0, 2)
-  let path = strpart(a:line, 3)
+  let path = strpart(a:line, a:path_offset)
   return {
         \ 'status': status,
-        \ 'path': fnamemodify(s:U.status.parse_path(status, path), ':p'),
+        \ 'path': s:U.absolute(s:U.status.parse_path(status, path)),
         \ 'raw': a:line
         \ }
 endfunction

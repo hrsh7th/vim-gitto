@@ -14,7 +14,7 @@ function! gitto#view#commit(paths)
 
   " initialize vars.
   let b:gitto_commit = {}
-  let b:gitto_commit.paths = map(a:paths, { k, v -> s:U.relative(v) })
+  let b:gitto_commit.paths = map(a:paths, { k, v -> s:U.relative(v, gitto#root_dir()) })
   function! b:gitto_commit.commit()
     if s:U.yes_or_no('commit?')
       call s:U.echomsgs(

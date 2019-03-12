@@ -38,6 +38,22 @@ function! gitto#git#branch#rename(name, new_name)
   call s:U.echomsgs(gitto#system('git branch -m %s %s', a:name, a:new_name))
 endfunction
 
+"
+" git merge %s %s
+"
+function! gitto#git#branch#merge(name)
+  let opts = extend(get(a:000, 0, {}), {})
+  call s:U.echomsgs(gitto#system('git merge %s %s', opts, a:name))
+endfunction
+
+"
+" git rebase %s %s
+"
+function! gitto#git#branch#rebase(name)
+  let opts = extend(get(a:000, 0, {}), {})
+  call s:U.echomsgs(gitto#system('git rebase %s %s', opts, a:name))
+endfunction
+
 " ---
 
 function! s:parse(branch)

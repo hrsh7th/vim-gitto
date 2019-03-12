@@ -2,7 +2,7 @@ let s:expect = themis#helper('expect')
 
 Describe gitto#git#status
   Before all
-    let g:gitto#config.get_buffer_path = { -> gitto#test#this_project('./') }
+    let g:gitto#config.get_buffer_path = { -> gitto#test#plugin_dir('./') }
     call gitto#test#set('gitto#system', [
           \   'M  gitto.vim',
           \   'R  branch.vim -> branch2.vim',
@@ -13,15 +13,12 @@ Describe gitto#git#status
   It #get
     let statuses = gitto#do('status#get')()
     call s:expect(statuses).to_have_length(3)
-
     call s:expect(statuses[0].status).to_equal('M ')
-    call s:expect(statuses[0].path).to_equal(gitto#test#this_project('./gitto.vim'))
-
+    call s:expect(statuses[0].path).to_equal(gitto#test#plugin_dir('./gitto.vim'))
     call s:expect(statuses[1].status).to_equal('R ')
-    call s:expect(statuses[1].path).to_equal(gitto#test#this_project('./branch2.vim'))
-
+    call s:expect(statuses[1].path).to_equal(gitto#test#plugin_dir('./branch2.vim'))
     call s:expect(statuses[2].status).to_equal('??')
-    call s:expect(statuses[2].path).to_equal(gitto#test#this_project('./debug.vim'))
+    call s:expect(statuses[2].path).to_equal(gitto#test#plugin_dir('./debug.vim'))
   End
 
 End

@@ -6,7 +6,7 @@ let s:U = gitto#util#get()
 function! gitto#git#changes#get(hash1, hash2)
   let statuses = gitto#system('git diff --name-status %s..%s', a:hash1, a:hash2)
   let statuses = filter(statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
-  let statuses = map(statuses, { k, v -> s:U.status.parse(v) })
+  let statuses = map(statuses, { k, v -> s:U.status.parse(v, 8) })
   return {
         \ 'from': a:hash1,
         \ 'to': a:hash2,

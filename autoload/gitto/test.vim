@@ -17,7 +17,7 @@ function! gitto#test#clear()
   let s:test = {}
 endfunction
 
-function! gitto#test#this_project(path)
-  return resolve(fnamemodify(fnamemodify(s:sdir, ':p:h:h:h') . '/' . a:path, ''))
+function! gitto#test#plugin_dir(path)
+  return resolve(fnamemodify(s:sdir, ':p:h:h:h') . '/' . a:path)
 endfunction
 
