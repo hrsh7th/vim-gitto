@@ -1,8 +1,6 @@
 # vim-gitto
 git client in vim.
 
-# usage
-
 ## API
 
 ### gitto#do(feature)(...args) -> lambda
@@ -61,4 +59,6 @@ function! g:gitto#config.get_buffer_path()
   return expand('%:p')
 endfunction
 ```
-
+# TODO
+- implements more feature.
+- error handling?
