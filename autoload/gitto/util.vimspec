@@ -1,0 +1,67 @@
+let s:expect = themis#helper('expect')
+let s:U = gitto#util#get()
+
+Describe gitto#util
+
+  It s:U.run_in_dir
+    let dir = expand('<sfile>:p:h')
+    execute printf('lcd %s', dir)
+    call s:expect(getcwd()).to_equal(dir)
+    call s:U.run_in_dir(
+          \   fnamemodify(dir, ':p:h'),
+          \   { -> s:expect(getcwd()).to_equal(fnamemodify(dir, ':p:h')) }
+          \ )
+    call s:expect(getcwd()).to_equal(dir)
+  End
+
+  It s:U.relative
+    let dir = expand('<sfile>:p:h')
+    let input = expand('<sfile>:p')
+    let expected = expand('<sfile>')
+    call s:U.run_in_dir(dir, { -> s:expect(s:U.relative(input)).to_equal(expected) })
+    call s:expect(s:U.relative(input, dir)).to_equal(expected)
+  End
+
+  It s:U.absolute
+    let dir = expand('<sfile>:p:h')
+    let input = expand('<sfile>')
+    let expected = expand('<sfile>:p')
+    call s:U.run_in_dir(dir, { -> s:expect(s:U.absolute(input)).to_equal(expected) })
+    call s:expect(s:U.absolute(input, dir)).to_equal(expected)
+  End
+
+  It s:U.combine
+    let Id = { v -> v }
+    let v = s:U.combine([['a', Id], ['b', Id], ['c', { v -> v * 2 }]], [1, 2, 3])
+    call s:expect(v).to_have_key('a')
+    call s:expect(v['a']).to_equal(1)
+    call s:expect(v).to_have_key('b')
+    call s:expect(v['b']).to_equal(2)
+    call s:expect(v).to_have_key('c')
+    call s:expect(v['c']).to_equal(6)
+  End
+
+  It s:U.opts
+    let opts = {
+          \ '--no-merges': v:true,
+          \ '--first-parent': v:false,
+          \ '--max-count': 10
+          \ }
+    call s:expect(s:U.opts(opts)).to_equal('--max-count=10 --no-merges')
+  End
+
+  It s:U.shellargs
+    let opts = {
+          \ '--no-merges': v:true,
+          \ '--first-parent': v:false,
+          \ '--max-count': 10
+          \ }
+    let paths = ['file1.vim', 'fil e2.vim']
+
+    let args = s:U.shellargs([opts, paths])
+    call s:expect(args[0]).to_equal('--max-count=10 --no-merges')
+    call s:expect(args[1]).to_equal("file1.vim fil\\ e2.vim")
+  End
+
+End
+

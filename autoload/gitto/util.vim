@@ -59,7 +59,7 @@ function! s:U.echomsgs(msgs)
     echomsg msg
   endfor
   if output
-    call input('')
+    call getchar()
   endif
 endfunction
 
@@ -73,7 +73,7 @@ function! s:U.shellargs(args)
   let args = []
   for arg in s:U.to_list(a:args)
     if type(arg) == v:t_list
-      let args = args + [join(map(arg, { k, v -> escape(v, ' ') }), ' ')]
+      let args = args + [join(map(arg, { k, v -> fnameescape(v) }), ' ')]
       continue
     endif
     if type(arg) == v:t_dict
@@ -103,8 +103,10 @@ endfunction
 function! s:U.opts(opts)
   let args = []
   for [k, v] in items(a:opts)
-    if type(v) == v:t_bool && v
-      call add(args, k)
+    if type(v) == v:t_bool
+      if v
+        call add(args, k)
+      endif
     else
       call add(args, k . '=' . v)
     endif
