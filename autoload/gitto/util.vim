@@ -87,13 +87,16 @@ endfunction
 
 " combine
 function! s:U.combine(columns, values)
-  let i = 0
-  let dict = {}
-  for [key, Converter] in a:columns
-    let dict[key] = Converter(a:values[i])
-    let i = i + 1
-  endfor
-  return dict
+  try
+    let i = 0
+    let dict = {}
+    for [key, Converter] in a:columns
+      let dict[key] = Converter(a:values[i])
+      let i = i + 1
+    endfor
+    return dict
+  catch
+  endtry
 endfunction
 
 " opts

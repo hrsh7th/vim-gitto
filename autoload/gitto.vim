@@ -32,7 +32,8 @@ function! gitto#system(cmd, ...)
     return gitto#test#get('gitto#system')
   endif
 
-  let output = split(system(call('printf', [a:cmd] + s:U.shellargs(a:000))), "\n")
+  let command = call('printf', [a:cmd] + s:U.shellargs(a:000))
+  let output = split(system(command), "\n")
   let output = map(output, { k, v -> s:U.chomp(v) })
   return output
 endfunction
