@@ -8,7 +8,6 @@ function! gitto#git#branch#get()
   let branches = filter(branches, { k, v -> match(v, '\s\->\s') == -1 })
   let branches = map(branches, { k, v -> s:parse(v) })
   let branches = s:U.uniq(branches, { v -> v.name })
-  echomsg json_encode(branches)
   return branches
 endfunction
 
