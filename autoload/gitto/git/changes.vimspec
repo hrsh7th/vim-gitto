@@ -4,9 +4,9 @@ Describe gitto#git#changes
   Before all
     let g:gitto#config.get_buffer_path = { -> gitto#test#plugin_dir('./') }
     call gitto#test#set('gitto#system', [
-          \ 'D       .themisrc',
-          \ 'M       autoload/vrsn.vim',
-          \ 'A       test/vrsn/git/status.vim'
+          \ 'D	.themisrc',
+          \ 'M	autoload/vrsn.vim',
+          \ 'A	test/vrsn/git/status.vim'
           \ ])
   End
 
@@ -15,11 +15,11 @@ Describe gitto#git#changes
     call s:expect(changes.from).to_equal('HEAD')
     call s:expect(changes.to).to_equal('HEAD^')
     call s:expect(changes.statuses).to_have_length(3)
-    call s:expect(changes.statuses[0].status).to_equal('D ')
+    call s:expect(changes.statuses[0].status).to_equal('D')
     call s:expect(changes.statuses[0].path).to_equal(gitto#test#plugin_dir('./.themisrc'))
-    call s:expect(changes.statuses[1].status).to_equal('M ')
+    call s:expect(changes.statuses[1].status).to_equal('M')
     call s:expect(changes.statuses[1].path).to_equal(gitto#test#plugin_dir('./autoload/vrsn.vim'))
-    call s:expect(changes.statuses[2].status).to_equal('A ')
+    call s:expect(changes.statuses[2].status).to_equal('A')
     call s:expect(changes.statuses[2].path).to_equal(gitto#test#plugin_dir('./test/vrsn/git/status.vim'))
   End
 

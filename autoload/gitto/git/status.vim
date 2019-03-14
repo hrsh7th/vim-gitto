@@ -6,7 +6,7 @@ let s:U = gitto#util#get()
 function! gitto#git#status#get()
   let statuses = gitto#system('git status --short')
   let statuses = filter(statuses, { k, v -> match(v, '^[?MADRCU ]\+') != -1 })
-  let statuses = map(statuses, { k, v -> s:U.status.parse(v, 3) })
+  let statuses = map(statuses, { k, v -> s:U.status.parse(v, 2, 3) })
   return statuses
 endfunction
 

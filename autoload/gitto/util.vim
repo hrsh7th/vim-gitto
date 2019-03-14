@@ -152,8 +152,8 @@ endfunction
 let s:U.status = {}
 
 " status.parse
-function! s:U.status.parse(line, path_offset)
-  let status = strpart(a:line, 0, 2)
+function! s:U.status.parse(line, status_offset, path_offset)
+  let status = strpart(a:line, 0, a:status_offset)
   let path = strpart(a:line, a:path_offset)
   return {
         \ 'status': status,
