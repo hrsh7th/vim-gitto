@@ -51,6 +51,20 @@ function! s:U.yes_or_no(msg)
   return v:false
 endfunction
 
+function! s:U.uniq(list, identity)
+  let keys = {}
+  let list = []
+  for v in a:list
+    let id = a:identity(v)
+    if has_key(keys, id)
+      continue
+    endif
+    let keys[id] = v:true
+    call add(list, v)
+  endfor
+  return list
+endfunction
+
 " echomsgs
 function! s:U.echomsgs(msgs, ...)
   let output = 0

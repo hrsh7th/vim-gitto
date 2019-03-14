@@ -7,6 +7,8 @@ function! gitto#git#branch#get()
   let branches = gitto#system('git branch -a')
   let branches = filter(branches, { k, v -> match(v, '\s\->\s') == -1 })
   let branches = map(branches, { k, v -> s:parse(v) })
+  let branches = s:U.uniq(branches, { v -> v.name })
+  echomsg json_encode(branches)
   return branches
 endfunction
 
@@ -50,7 +52,7 @@ endfunction
 "
 " git merge %s %s
 "
-function! gitto#git#branch#merge(name)
+function! gitto#git#branch#merge(name, ...)
   let opts = extend(get(a:000, 0, {}), {})
   call s:U.echomsgs(gitto#system('git merge %s %s', opts, a:name))
 endfunction
@@ -58,7 +60,7 @@ endfunction
 "
 " git rebase %s %s
 "
-function! gitto#git#branch#rebase(name)
+function! gitto#git#branch#rebase(name, ...)
   let opts = extend(get(a:000, 0, {}), {})
   call s:U.echomsgs(gitto#system('git rebase %s %s', opts, a:name))
 endfunction
