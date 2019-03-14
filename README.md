@@ -21,6 +21,31 @@ call gitto#run('status#reset', '/path/to/file')
 
 NOTE: You might not need this. It's used by neovim's remote plugin.
 
+### gitto#view#commit(paths)
+You can open commit view in other tabpage.
+
+```
+call gitto#view#commit(['/path/to/commit1', '/path/to/commit2'])
+```
+
+### gitto#view#diff_file_with_hash(path, info)
+You can open vimdiff view in other tabpage.
+
+> `info` is `{ hash: string; path: string }`
+
+```
+call gitto#view#diff_file_with_hash('/path/to/diff', { 'hash': 'HEAD', 'path': '/path/to/diff' })
+```
+
+### gitto#view#diff_hash_with_hash(info1, info2)
+You can open vimdiff view in other tabpage.
+
+> `info` is `{ hash: string; path: string }`
+
+```
+call gitto#view#diff_hash_with_hash({ 'hash': 'HEAD', 'path': '/path/to/diff' }, { 'hash': 'HEAD^', 'path': '/path/to/diff' })
+```
+
 ## Feature
 
 ### status#get() -> { status, path, raw }[]
