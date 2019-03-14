@@ -16,7 +16,7 @@ endfunction
 function! gitto#git#branch#current()
   let branches = gitto#do('branch#get')()
   let branches = filter(branches, { k, v -> v.current })
-  return get(branches, 0, v:null)
+  return get(branches, 0, {})
 endfunction
 
 "
@@ -66,10 +66,10 @@ endfunction
 "
 " git push origin %s %s
 "
-function! gitto#git#branch#push(name, ...)
+function! gitto#git#branch#push(...)
   let opts = extend(get(a:000, 0, {}), {})
   let current = gitto#do('branch#current')()
-  if current
+  if !empty(current)
     call s:U.echomsgs(gitto#system('git push origin %s %s', opts, current.name))
   else
     call s:U.echomsgs('taget branch is not found.')
