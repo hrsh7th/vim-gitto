@@ -45,43 +45,44 @@ function! gitto#view#commit(paths)
   augroup END
 endfunction
 
+"
+" gitto#view#diff_file_with_hash
+" - path: string
+" - info: { path: string; hash: string }
+"
 function! gitto#view#diff_file_with_hash(path, info)
   if !filereadable(a:path)
     return s:U.echomsgs(printf('`%s` is not found.', a:path))
   endif
 
   let content = gitto#do('show#get')(a:info.hash, a:info.path)
-
-  call s:U.exec('tabedit %s', a:path)
-  diffthis
-
-  vnew
-  put!=content
-  $delete
-  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
-  diffthis
-
-  silent! wincmd p
+  call s:put_content('tabnew', a:info, content)
+  silent! diffthis
+  call s:U.exec('topleft vsplit %s', a:path)
+  silent! diffthis
 endfunction
 
+"
+" gitto#view#diff_hash_with_hash
+" - info1: { path: string; hash: string }
+" - info2: { path: string; hash: string }
+"
 function! gitto#view#diff_hash_with_hash(info1, info2)
   let content1 = gitto#do('show#get')(a:info1.hash, a:info1.path)
   let content2 = gitto#do('show#get')(a:info2.hash, a:info2.path)
 
-  " content1
-  tabnew
-  put!=content1
-  $delete
-  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
-  diffthis
+  call s:put_content('tabnew', a:info2, content2)
+  silent! diffthis
+  call s:put_content('topleft vnew', a:info1, content1)
+  silent! diffthis
+endfunction
 
-  " content2
-  vnew
-  put!=content2
+function! s:put_content(open, info, content)
+  call s:U.exec('%s', a:open)
+  call s:U.exec('file! %s', fnameescape(printf('%s:%s', a:info.path, a:info.hash)))
+  silent! put!=a:content
   $delete
-  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
-  diffthis
-
-  silent! wincmd p
+  setlocal bufhidden=wipe buftype=nofile nobuflisted noswapfile nomodifiable
+  filetype detect
 endfunction
 
