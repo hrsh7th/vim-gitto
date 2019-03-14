@@ -58,7 +58,7 @@ function! s:U.echomsgs(msgs)
     let output = output || match(msg, '[^[:blank:]]') >= 0
     echomsg msg
   endfor
-  if output
+  if output && get(a:000, 0, 1)
     call getchar()
   endif
 endfunction

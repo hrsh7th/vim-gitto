@@ -21,7 +21,8 @@ function! gitto#view#commit(paths)
             \   s:U.run_in_dir(
             \     gitto#root_dir(),
             \     { -> gitto#system('git commit -F %s -- %s', expand('%:p'), b:gitto_commit.paths) }
-            \   )
+            \   ),
+            \   0
             \ )
     endif
     bdelete!
@@ -79,10 +80,10 @@ endfunction
 
 function! s:put_content(open, info, content)
   call s:U.exec('%s', a:open)
-  call s:U.exec('file! %s', fnameescape(printf('%s:%s', a:info.path, a:info.hash)))
+  call s:U.exec('file! %s', fnameescape(printf('%s:%s', a:info.hash, a:info.path)))
   silent! put!=a:content
   $delete
-  setlocal bufhidden=wipe buftype=nofile nobuflisted noswapfile nomodifiable
+  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
   filetype detect
 endfunction
 
