@@ -11,6 +11,15 @@ function! gitto#git#branch#get()
 endfunction
 
 "
+" `git branch -a`
+"
+function! gitto#git#branch#current()
+  let branches = gitto#do('branch#get')()
+  let branches = filter(branches, { k, v -> v.current })
+  return get(branches, 0, v:null)
+endfunction
+
+"
 " `git checkout %s`
 "
 function! gitto#git#branch#checkout(name)
@@ -54,13 +63,26 @@ function! gitto#git#branch#rebase(name)
   call s:U.echomsgs(gitto#system('git rebase %s %s', opts, a:name))
 endfunction
 
+"
+" git push origin %s %s
+"
+function! gitto#git#branch#push(name, ...)
+  let opts = extend(get(a:000, 0, {}), {})
+  let current = gitto#do('branch#current')()
+  if current
+    call s:U.echomsgs(gitto#system('git push origin %s %s', opts, current.name))
+  else
+    call s:U.echomsgs('taget branch is not found.')
+endif
+endfunction
+
 " ---
 
 function! s:parse(branch)
   let mark = strpart(a:branch, 0, 2)
   let others = strpart(a:branch, 2)
   let remote = s:U.or(matchstr(others, '^remotes\/\zs.\+\ze\/'), 'origin')
-  let name = matchstr(others, 'remotes\/\zs.\+\|^.\+$')
+  let name = matchstr(others, 'remotes\/[^\/]\+\/\zs.\+\|^.\+$')
   return  {
         \ 'name': name,
         \ 'current': mark ==# '* ',
