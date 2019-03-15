@@ -3,8 +3,9 @@ let s:U = gitto#util#get()
 "
 " `git branch -a`
 "
-function! gitto#git#branch#get()
-  let branches = gitto#system('git branch -a')
+function! gitto#git#branch#get(...)
+  let opts = extend(get(a:000, 0, {}), {})
+  let branches = gitto#system('git branch %s', opts)
   let branches = filter(branches, { k, v -> match(v, '\s\->\s') == -1 })
   let branches = map(branches, { k, v -> s:parse(v) })
   let branches = s:U.uniq(branches, { v -> v.remote . '/' . v.name })
