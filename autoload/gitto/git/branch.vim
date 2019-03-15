@@ -21,17 +21,6 @@ function! gitto#git#branch#current()
 endfunction
 
 "
-" current branch name
-"
-function! gitto#git#branch#current_name()
-  if !filereadable(getcwd() . '/.git/HEAD')
-    throw 'not in git repo'
-  endif
-  let l = readfile(getcwd() . '/.git/HEAD')[0]
-  return matchstr(l, 'ref: refs/heads/\zs.\+')
-endfunction
-
-"
 " `git checkout %s`
 "
 function! gitto#git#branch#checkout(name)
@@ -78,27 +67,17 @@ endfunction
 "
 " git push origin %s %s
 "
-function! gitto#git#branch#push(...)
+function! gitto#git#branch#push(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  let current = gitto#do('branch#current')()
-  if !empty(current)
-    call s:U.echomsgs(gitto#system('git push origin %s %s', opts, current.name))
-  else
-    call s:U.echomsgs('taget branch is not found.')
-  endif
+  call s:U.echomsgs(gitto#system('git push origin %s %s', opts, a:branch.name))
 endfunction
 
 "
 " git pull %s %s
 "
-function! gitto#git#branch#pull(...)
+function! gitto#git#branch#pull(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  let current = gitto#do('branch#current')()
-  if !empty(current)
-    call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, current.remote, current.name))
-  else
-    call s:U.echomsgs('taget branch is not found.')
-endif
+  call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, a:branch.remote, a:branch.name))
 endfunction
 
 " ---

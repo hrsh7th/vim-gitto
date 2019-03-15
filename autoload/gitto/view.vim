@@ -81,8 +81,7 @@ endfunction
 function! s:put_content(open, info, content)
   call s:U.exec('%s', a:open)
   call s:U.exec('file! %s', fnameescape(printf('%s:%s', a:info.hash, a:info.path)))
-  silent! put!=a:content
-  $delete
+  silent! put!=a:content | $delete
   setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
   filetype detect
 endfunction
