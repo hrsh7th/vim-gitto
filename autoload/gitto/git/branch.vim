@@ -7,7 +7,7 @@ function! gitto#git#branch#get()
   let branches = gitto#system('git branch -a')
   let branches = filter(branches, { k, v -> match(v, '\s\->\s') == -1 })
   let branches = map(branches, { k, v -> s:parse(v) })
-  let branches = s:U.uniq(branches, { v -> v.name })
+  let branches = s:U.uniq(branches, { v -> v.remote . '/' . v.name })
   return branches
 endfunction
 
@@ -84,7 +84,7 @@ function! gitto#git#branch#pull(...)
   let opts = extend(get(a:000, 0, {}), {})
   let current = gitto#do('branch#current')()
   if !empty(current)
-    call s:U.echomsgs(gitto#system('git pull %s %s', opts, current.name))
+    call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, current.remote, current.name))
   else
     call s:U.echomsgs('taget branch is not found.')
 endif
