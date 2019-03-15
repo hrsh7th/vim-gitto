@@ -74,6 +74,19 @@ function! gitto#git#branch#push(...)
     call s:U.echomsgs(gitto#system('git push origin %s %s', opts, current.name))
   else
     call s:U.echomsgs('taget branch is not found.')
+  endif
+endfunction
+
+"
+" git pull %s %s
+"
+function! gitto#git#branch#pull(...)
+  let opts = extend(get(a:000, 0, {}), {})
+  let current = gitto#do('branch#current')()
+  if !empty(current)
+    call s:U.echomsgs(gitto#system('git pull %s %s', opts, current.name))
+  else
+    call s:U.echomsgs('taget branch is not found.')
 endif
 endfunction
 
