@@ -21,6 +21,17 @@ function! gitto#git#branch#current()
 endfunction
 
 "
+" current branch name
+"
+function! gitto#git#branch#current_name()
+  if !filereadable(getcwd() . '/.git/HEAD')
+    throw 'not in git repo'
+  endif
+  let l = readfile(getcwd() . '/.git/HEAD')[0]
+  return matchstr(l, 'ref: refs/heads/\zs.\+')
+endfunction
+
+"
 " `git checkout %s`
 "
 function! gitto#git#branch#checkout(name)
