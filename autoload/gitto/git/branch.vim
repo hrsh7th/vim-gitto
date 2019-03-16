@@ -4,7 +4,7 @@ let s:columns = [
       \ ['HEAD', { v -> v }],
       \ ['refname', { v -> v }],
       \ ['upstream', { v -> v }],
-      \ ['upstream:trackshort', { v -> v }],
+      \ ['upstream_track', { v -> v }],
       \ ['subject', { v -> v }],
       \ ]
 
@@ -12,24 +12,25 @@ let s:columns = [
 " `git branch -a`
 "
 function! gitto#git#branch#get(...)
-    let opts = extend(get(a:000, 0, {}), {
-          \ '--format': '"%(HEAD)%09%(refname)%09%(upstream)%09%(upstream:trackshort)%09%(subject)"',
-          \ '--sort': 'committerdate'
-          \ })
+  let opts = extend(get(a:000, 0, {}), {
+        \ '--format': '"%(HEAD)%09%(refname)%09%(upstream)%09%(upstream:track)%09%(subject)"',
+        \ '--sort': '-committerdate'
+        \ })
 
-    let branches = map(gitto#system('git branch %s', opts), { k, v -> s:U.combine(s:columns, split(v, "\t")) })
-    let branches = filter(branches, { k, v -> !empty(v) })
-    let branches = map(branches, { k, v ->
-          \   extend(v, {
-          \     'name': matchstr(v.refname, '^\%(refs/heads\|refs/remotes/[^/]\+\)/\zs.\+'),
-          \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
-          \     'current': v['HEAD'] ==# '*'
-          \   })
-          \ })
-    let branches = filter(branches, { k, v -> v.name !=# 'HEAD' })
-    let branches = s:U.uniq(branches, { v -> v.remote . '/' .v.name })
-    return branches
-  return []
+  let branches = map(gitto#system('git branch %s', opts), { k, v -> s:U.combine(s:columns, split(v, "\t")) })
+  let branches = filter(branches, { k, v -> !empty(v) })
+  let branches = map(branches, { k, v ->
+        \   extend(v, {
+        \     'name': matchstr(v.refname, '^\%(refs/heads\|refs/remotes/[^/]\+\)/\zs.\+'),
+        \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
+        \     'current': v.HEAD ==# '*',
+        \     'ahead': str2nr(s:U.or(matchstr(v.upstream_track, 'ahead\s\zs\d\+'), '0')),
+        \     'behind': str2nr(s:U.or(matchstr(v.upstream_track, 'behind\s\zs\d\+'), '0')),
+        \   })
+        \ })
+  let branches = filter(branches, { k, v1 -> empty(s:U.find(branches, { v2 -> v1.refname == v2.upstream })) })
+  let branches = filter(branches, { k, v -> v.name !=# 'HEAD' })
+  return branches
 endfunction
 
 "

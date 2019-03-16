@@ -51,6 +51,18 @@ function! s:U.yes_or_no(msg)
   return v:false
 endfunction
 
+" find
+function! s:U.find(list, finder)
+  for v in a:list
+    let item = a:finder(v)
+    if !empty(item)
+      return item
+    endif
+  endfor
+  return {}
+endfunction
+
+" uniq
 function! s:U.uniq(list, identity)
   let keys = {}
   let list = []
