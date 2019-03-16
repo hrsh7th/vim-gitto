@@ -8,12 +8,17 @@ function! gitto#git#repo#head()
   return matchstr(l, 'ref: refs/heads/\zs.\+')
 endfunction
 
+function! gitto#git#repo#fetch(...)
+  let opts = extend(get(a:000, 0, {}), {})
+  call s:U.echomsgs(gitto#system('git fetch %s', opts))
+endfunction
+
 function! gitto#git#repo#push(...)
   let current = gitto#do('branch#current')()
   if empty(current)
     return s:U.echomsgs("current branch can't detect.")
   endif
-  if !current.upstream
+  if !strlen(current.upstream)
     return s:U.echomsgs('should set upstream branch.')
   endif
   call call(gitto#do('branch#push'), [current] + a:000)
@@ -24,7 +29,7 @@ function! gitto#git#repo#pull(...)
   if empty(current)
     return s:U.echomsgs("current branch can't detect.")
   endif
-  if !current.upstream
+  if !strlen(current.upstream)
     return s:U.echomsgs('should set upstream branch.')
   endif
   call call(gitto#do('branch#pull'), [current] + a:000)

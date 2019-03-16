@@ -21,7 +21,7 @@ function! gitto#git#branch#get(...)
   let branches = filter(branches, { k, v -> !empty(v) })
   let branches = map(branches, { k, v ->
         \   extend(v, {
-        \     'name': matchstr(v.refname, '^\%(refs/heads\|refs/remotes/[^/]\+\)/\zs.\+'),
+        \     'name': matchstr(v.refname, '\%(^refs/heads/\zs.\+\|refs/remotes/[^/]\+/\zs.\+\)'),
         \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
         \     'current': v.HEAD ==# '*',
         \     'ahead': str2nr(s:U.or(matchstr(v.upstream_track, 'ahead\s\zs\d\+'), '0')),
@@ -29,7 +29,7 @@ function! gitto#git#branch#get(...)
         \   })
         \ })
   let branches = filter(branches, { k, v1 -> empty(s:U.find(branches, { v2 -> v1.refname == v2.upstream })) })
-  let branches = filter(branches, { k, v -> v.name !=# 'HEAD' })
+  let branches = filter(branches, { k, v -> v.name !=# 'origin/HEAD' })
   return branches
 endfunction
 
@@ -60,6 +60,16 @@ endfunction
 "
 function! gitto#git#branch#new(name, ...)
   let opts = extend(get(a:000, 0, {}), {})
+  call s:U.echomsgs(gitto#system('git branch %s %s', opts, a:name))
+endfunction
+
+"
+" git branch -D %s %s
+"
+function! gitto#git#branch#delete(name, ...)
+  let opts = extend(get(a:000, 0, {}), {
+        \ '-D': v:true
+        \ })
   call s:U.echomsgs(gitto#system('git branch %s %s', opts, a:name))
 endfunction
 
