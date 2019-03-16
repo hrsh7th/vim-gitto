@@ -3,17 +3,31 @@ let s:expect = themis#helper('expect')
 Describe gitto#git#branch
   Before all
     call gitto#test#set('gitto#system', [
-          \   '* branch-name',
-          \   '  remotes/origin/HEAD -> origin/branch',
-          \   '  remotes/origin/branch',
+          \ '*	refs/heads/master	refs/remotes/upstream/master	refs/remotes/upstream/master	Refactor',
+          \ ' 	refs/remotes/origin/master			Refactor',
           \ ])
   End
 
   It #get
     let branches = gitto#do('branch#get')()
     call s:expect(branches).to_have_length(2)
-    call s:expect(branches[0]['name']).to_equal('branch-name')
-    call s:expect(branches[1]['name']).to_equal('branch')
+    call s:expect(branches[0]['HEAD']).to_equal('*')
+    call s:expect(branches[0]['refname']).to_equal('refs/heads/master')
+    call s:expect(branches[0]['upstream']).to_equal('refs/remotes/upstream/master')
+    call s:expect(branches[0]['subject']).to_equal('Refactor')
+
+    call s:expect(branches[0]['name']).to_equal('master')
+    call s:expect(branches[0]['remote']).to_equal('upstream')
+    call s:expect(branches[0]['current']).to_equal(1)
+
+    call s:expect(branches[1]['HEAD']).to_equal(' ')
+    call s:expect(branches[1]['refname']).to_equal('refs/remotes/origin/master')
+    call s:expect(branches[1]['upstream']).to_equal('')
+    call s:expect(branches[1]['subject']).to_equal('Refactor')
+
+    call s:expect(branches[1]['name']).to_equal('master')
+    call s:expect(branches[1]['remote']).to_equal('origin')
+    call s:expect(branches[1]['current']).to_equal(0)
   End
 
 End

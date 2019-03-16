@@ -111,6 +111,7 @@ function! s:U.combine(columns, values)
     return dict
   catch
   endtry
+  return {}
 endfunction
 
 " opts

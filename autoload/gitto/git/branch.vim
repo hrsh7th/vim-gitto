@@ -1,15 +1,32 @@
 let s:U = gitto#util#get()
 
+let s:columns = [
+      \ ['HEAD', { v -> v }],
+      \ ['refname', { v -> v }],
+      \ ['push', { v -> v }],
+      \ ['upstream', { v -> v }],
+      \ ['subject', { v -> v }],
+      \ ]
+
 "
 " `git branch -a`
 "
 function! gitto#git#branch#get(...)
-  let opts = extend(get(a:000, 0, {}), {})
-  let branches = gitto#system('git branch %s', opts)
-  let branches = filter(branches, { k, v -> match(v, '\s\->\s') == -1 })
-  let branches = map(branches, { k, v -> s:parse(v) })
-  let branches = s:U.uniq(branches, { v -> v.remote . '/' . v.name })
-  return branches
+    let opts = extend(get(a:000, 0, {}), {
+          \ '--format': '"%(HEAD)%09%(refname)%09%(push)%09%(upstream)%09%(subject)"',
+          \ '--sort': 'committerdate'
+          \ })
+    let branches = map(gitto#system('git branch %s', opts), { k, v -> s:U.combine(s:columns, split(v, "\t")) })
+    let branches = filter(branches, { k, v -> !empty(v) })
+    let branches = map(branches, { k, v ->
+          \   extend(v, {
+          \     'name': matchstr(v.refname, '^\%(refs/heads\|refs/remotes/[^/]\+\)/\zs.\+'),
+          \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
+          \     'current': v['HEAD'] ==# '*'
+          \   })
+          \ })
+    return branches
+  return []
 endfunction
 
 "
@@ -79,20 +96,5 @@ endfunction
 function! gitto#git#branch#pull(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
   call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, a:branch.remote, a:branch.name))
-endfunction
-
-" ---
-
-function! s:parse(branch)
-  let mark = strpart(a:branch, 0, 2)
-  let others = strpart(a:branch, 2)
-  let remote = s:U.or(matchstr(others, '^remotes\/\zs.\+\ze\/'), 'origin')
-  let name = matchstr(others, 'remotes\/[^\/]\+\/\zs.\+\|^.\+$')
-  return  {
-        \ 'name': name,
-        \ 'current': mark ==# '* ',
-        \ 'remote': remote,
-        \ 'raw': a:branch
-        \ }
 endfunction
 
