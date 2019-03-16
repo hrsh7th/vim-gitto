@@ -3,8 +3,8 @@ let s:U = gitto#util#get()
 let s:columns = [
       \ ['HEAD', { v -> v }],
       \ ['refname', { v -> v }],
-      \ ['push', { v -> v }],
       \ ['upstream', { v -> v }],
+      \ ['upstream:trackshort', { v -> v }],
       \ ['subject', { v -> v }],
       \ ]
 
@@ -13,9 +13,10 @@ let s:columns = [
 "
 function! gitto#git#branch#get(...)
     let opts = extend(get(a:000, 0, {}), {
-          \ '--format': '"%(HEAD)%09%(refname)%09%(push)%09%(upstream)%09%(subject)"',
+          \ '--format': '"%(HEAD)%09%(refname)%09%(upstream)%09%(upstream:trackshort)%09%(subject)"',
           \ '--sort': 'committerdate'
           \ })
+
     let branches = map(gitto#system('git branch %s', opts), { k, v -> s:U.combine(s:columns, split(v, "\t")) })
     let branches = filter(branches, { k, v -> !empty(v) })
     let branches = map(branches, { k, v ->
@@ -25,6 +26,8 @@ function! gitto#git#branch#get(...)
           \     'current': v['HEAD'] ==# '*'
           \   })
           \ })
+    let branches = filter(branches, { k, v -> v.name !=# 'HEAD' })
+    let branches = s:U.uniq(branches, { v -> v.remote . '/' .v.name })
     return branches
   return []
 endfunction
