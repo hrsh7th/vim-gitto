@@ -117,6 +117,9 @@ endfunction
 " git pull %s %s
 "
 function! gitto#git#branch#pull(branch, ...)
+  if !strlen(a:branch['upstream'])
+    return s:U.echomsgs('should set upstream branch')
+  endif
   let opts = extend(get(a:000, 0, {}), {})
   call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, a:branch.remote, a:branch.name))
 endfunction

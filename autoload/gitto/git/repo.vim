@@ -18,9 +18,6 @@ function! gitto#git#repo#push(...)
   if empty(current)
     return s:U.echomsgs("current branch can't detect.")
   endif
-  if !strlen(current.upstream)
-    return s:U.echomsgs('should set upstream branch.')
-  endif
   call call(gitto#do('branch#push'), [current] + a:000)
 endfunction
 
