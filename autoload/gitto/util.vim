@@ -135,7 +135,9 @@ function! s:U.opts(opts)
         call add(args, k)
       endif
     else
-      call add(args, k . '=' . v)
+      for v_ in s:U.to_list(v)
+        call add(args, k . '=' . v_)
+      endfor
     endif
   endfor
   return join(args, ' ')

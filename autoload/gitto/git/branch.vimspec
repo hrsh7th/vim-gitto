@@ -14,7 +14,7 @@ Describe gitto#git#branch
     call s:expect(branches[0]['HEAD']).to_equal('*')
     call s:expect(branches[0]['refname']).to_equal('refs/heads/master')
     call s:expect(branches[0]['upstream']).to_equal('refs/remotes/upstream/master')
-    call s:expect(branches[0]['upstream:track']).to_equal('=')
+    call s:expect(branches[0]['upstream_track']).to_equal('=')
     call s:expect(branches[0]['subject']).to_equal('Refactor')
 
     call s:expect(branches[0]['name']).to_equal('master')
@@ -24,7 +24,7 @@ Describe gitto#git#branch
     call s:expect(branches[1]['HEAD']).to_equal(' ')
     call s:expect(branches[1]['refname']).to_equal('refs/remotes/origin/master')
     call s:expect(branches[1]['upstream']).to_equal('')
-    call s:expect(branches[1]['upstream:track']).to_equal('')
+    call s:expect(branches[1]['upstream_track']).to_equal('')
     call s:expect(branches[1]['subject']).to_equal('Refactor')
 
     call s:expect(branches[1]['name']).to_equal('master')

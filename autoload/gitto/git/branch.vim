@@ -14,7 +14,7 @@ let s:columns = [
 function! gitto#git#branch#get(...)
   let opts = extend(get(a:000, 0, {}), {
         \ '--format': '"%(HEAD)%09%(refname)%09%(upstream)%09%(upstream:track)%09%(subject)"',
-        \ '--sort': '-committerdate'
+        \ '--sort': ['-authordate', 'refname:rstrip=-2']
         \ })
 
   let branches = map(gitto#system('git branch %s', opts), { k, v -> s:U.combine(s:columns, split(v, "\t")) })
@@ -23,6 +23,7 @@ function! gitto#git#branch#get(...)
         \   extend(v, {
         \     'name': matchstr(v.refname, '\%(^refs/heads/\zs.\+\|refs/remotes/[^/]\+/\zs.\+\)'),
         \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
+        \     'local': match(v.refname, '^refs/heads') >= 0 ? v:true : v:false,
         \     'current': v.HEAD ==# '*',
         \     'ahead': str2nr(s:U.or(matchstr(v.upstream_track, 'ahead\s\zs\d\+'), '0')),
         \     'behind': str2nr(s:U.or(matchstr(v.upstream_track, 'behind\s\zs\d\+'), '0')),
