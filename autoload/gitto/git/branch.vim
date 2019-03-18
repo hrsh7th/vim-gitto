@@ -9,7 +9,7 @@ let s:columns = [
       \ ]
 
 "
-" `git branch -a`
+" get branches
 "
 function! gitto#git#branch#get(...)
   let opts = extend(get(a:000, 0, {}), {
@@ -29,13 +29,12 @@ function! gitto#git#branch#get(...)
         \     'behind': str2nr(s:U.or(matchstr(v.upstream_track, 'behind\s\zs\d\+'), '0')),
         \   })
         \ })
-  let branches = filter(branches, { k, v1 -> empty(s:U.find(branches, { v2 -> v1.refname == v2.upstream })) })
   let branches = filter(branches, { k, v -> v.name !=# 'origin/HEAD' })
   return branches
 endfunction
 
 "
-" `git branch -a`
+" get current branch
 "
 function! gitto#git#branch#current()
   let branches = gitto#do('branch#get')()
@@ -44,34 +43,17 @@ function! gitto#git#branch#current()
 endfunction
 
 "
-" `git checkout %s`
+" `git checkout %name`
 "
 function! gitto#git#branch#checkout(name)
-  let branches = gitto#do('branch#get')()
-  let exists = len(filter(branches, { k, v -> v.name == a:name }))
-  if exists
-    call s:U.echomsgs(gitto#system('git checkout %s', a:name))
-  else
-    call s:U.echomsgs(gitto#system('git checkout -b %s', a:name))
-  endif
+  call s:U.echomsgs(gitto#system('git checkout %s', a:name))
 endfunction
 
 "
-" `git branch %s`
+" `git branch %name`
 "
 function! gitto#git#branch#new(name, ...)
-  let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git branch %s %s', opts, a:name))
-endfunction
-
-"
-" git branch -D %s %s
-"
-function! gitto#git#branch#delete(name, ...)
-  let opts = extend(get(a:000, 0, {}), {
-        \ '-D': v:true
-        \ })
-  call s:U.echomsgs(gitto#system('git branch %s %s', opts, a:name))
+  call s:U.echomsgs(gitto#system('git branch %s', a:name))
 endfunction
 
 "
@@ -82,19 +64,42 @@ function! gitto#git#branch#rename(name, new_name)
 endfunction
 
 "
+" `git branch -D %name` or `git push %remote :%name`
+"
+function! gitto#git#branch#delete(branch, ...)
+  if a:branch['local']
+    call s:U.echomsgs(gitto#system('git branch -D %s', a:branch['name']))
+  else
+    call s:U.echomsgs(gitto#system('git push %s :%s', a:branch['remote'], a:branch['name']))
+  endif
+endfunction
+
+"
 " git merge %s %s
 "
-function! gitto#git#branch#merge(name, ...)
+function! gitto#git#branch#merge(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git merge %s %s', opts, a:name))
+  call s:U.echomsgs(gitto#system(
+        \   'git merge %s %s',
+        \   opts,
+        \   a:branch['local']
+        \     ? a:branch['name']
+        \     : a:branch['remote'] . '/' . a:branch['name'])
+        \ )
 endfunction
 
 "
 " git rebase %s %s
 "
-function! gitto#git#branch#rebase(name, ...)
+function! gitto#git#branch#rebase(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git rebase %s %s', opts, a:name))
+  call s:U.echomsgs(gitto#system(
+        \   'git rebase %s %s',
+        \   opts,
+        \   a:branch['local']
+        \     ? a:branch['name']
+        \     : a:branch['remote'] . '/' . a:branch['name'])
+        \ )
 endfunction
 
 "
@@ -102,7 +107,10 @@ endfunction
 "
 function! gitto#git#branch#push(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git push origin %s %s', opts, a:branch.name))
+  if !a:branch['local']
+    return s:U.echomsgs("can't push remote branch")
+  endif
+  call s:U.echomsgs(gitto#system('git push %s %s %s', opts, a:branch.remote, a:branch.name))
 endfunction
 
 "
@@ -111,5 +119,15 @@ endfunction
 function! gitto#git#branch#pull(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
   call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, a:branch.remote, a:branch.name))
+endfunction
+
+"
+" git branch --set-upstream-to=%s
+"
+function! gitto#git#branch#set_upstream_to(branch, ...)
+  let opts = extend(get(a:000, 0, {}), {
+        \ '--set-upstream-to': a:branch['remote'] . '/' .a:branch['name']
+        \ })
+  call s:U.echomsgs(gitto#system('git branch %s', opts))
 endfunction
 
