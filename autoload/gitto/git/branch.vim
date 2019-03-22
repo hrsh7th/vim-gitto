@@ -21,7 +21,7 @@ function! gitto#git#branch#get(...)
   let branches = filter(branches, { k, v -> !empty(v) })
   let branches = map(branches, { k, v ->
         \   extend(v, {
-        \     'name': matchstr(v.refname, '\%(^refs/heads/\zs.\+\|refs/remotes/[^/]\+/\zs.\+\)'),
+        \     'name': s:refname2name(v.refname),
         \     'remote': s:U.or(matchstr(s:U.or(v.upstream, v.refname), '^refs/remotes/\zs[^/]\+'), 'origin'),
         \     'local': match(v.refname, '^refs/heads') >= 0 ? v:true : v:false,
         \     'current': v.HEAD ==# '*',
@@ -117,6 +117,9 @@ endfunction
 " git pull %s %s
 "
 function! gitto#git#branch#pull(branch, ...)
+  if !a:branch['current']
+    return s:U.echomsgs("can't pull not current branch")
+  endif
   if !strlen(a:branch['upstream'])
     return s:U.echomsgs('should set upstream branch')
   endif
@@ -125,12 +128,35 @@ function! gitto#git#branch#pull(branch, ...)
 endfunction
 
 "
+"git fetch %remote %remote:%local
+"
+function! gitto#git#branch#fetch(branch, ...)
+  if !strlen(a:branch['upstream'])
+    return s:U.echomsgs('should set upstream branch')
+  endif
+  let opts = extend(get(a:000, 0, {}), {})
+  call s:U.echomsgs(gitto#system('git fetch %s %s %s:%s',
+        \ opts,
+        \ a:branch.remote,
+        \ a:branch.name,
+        \ s:refname2name(a:branch.upstream)))
+endfunction
+
+"
 " git branch --set-upstream-to=%s
 "
 function! gitto#git#branch#set_upstream_to(branch, ...)
   let opts = extend(get(a:000, 0, {}), {
-        \ '--set-upstream-to': a:branch['remote'] . '/' .a:branch['name']
+        \ '--set-upstream-to': a:branch['remote'] . '/' . a:branch['name']
         \ })
   call s:U.echomsgs(gitto#system('git branch %s', opts))
+endfunction
+
+"
+" ---
+"
+
+function! s:refname2name(refname)
+  return matchstr(a:refname, '\%(^refs/heads/\zs.\+\|refs/remotes/[^/]\+/\zs.\+\)')
 endfunction
 
