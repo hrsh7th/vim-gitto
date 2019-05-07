@@ -59,9 +59,10 @@ function! gitto#view#diff_file_with_hash(path, info)
   let content = gitto#do('show#get')(a:info.hash, a:info.path)
   call s:put_content('tabnew', a:info, content)
   silent! diffthis
+  normal! zM
   call s:U.exec('topleft vsplit %s', a:path)
   silent! diffthis
-  call cursor(1, 1)
+  normal! zM
 endfunction
 
 "
@@ -75,9 +76,10 @@ function! gitto#view#diff_hash_with_hash(info1, info2)
 
   call s:put_content('tabnew', a:info2, content2)
   silent! diffthis
+  normal! zM
   call s:put_content('topleft vnew', a:info1, content1)
   silent! diffthis
-  call cursor(1, 1)
+  normal! zM
 endfunction
 
 function! s:put_content(open, info, content)
