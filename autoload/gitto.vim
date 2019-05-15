@@ -3,21 +3,15 @@ let g:gitto#config.get_buffer_path = get(g:gitto#config, 'get_buffer_path', { ->
 
 let s:U = gitto#util#get()
 
-function! gitto#run(name, ...)
-  return call(gitto#do(a:name), a:000)
+function! gitto#run(feature, ...)
+  let dir = g:gitto#config.get_buffer_path()
+  return call(function('gitto#run_in_dir'), [dir, a:feature] + a:000)
 endfunction
 
-function! gitto#do(name)
-  let fname = printf('gitto#git#%s', a:name)
-
+function! gitto#run_in_dir(dir, feature, ...)
+  let fname = printf('gitto#git#%s', a:feature)
   call s:U.autoload_by_funcname(fname)
-
-  return { ->
-        \   s:U.run_in_dir(
-        \     gitto#root_dir(g:gitto#config.get_buffer_path()),
-        \     funcref(fname, a:000)
-        \   )
-        \ }
+  return s:U.run_in_dir(gitto#root_dir(a:dir), function(fname, a:000))
 endfunction
 
 function! gitto#root_dir(...)

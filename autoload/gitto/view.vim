@@ -46,6 +46,10 @@ function! gitto#view#commit(paths)
   augroup END
 endfunction
 
+function! gitto#view#commit_in_dir(dir, paths)
+  return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#commit', [a:paths]))
+endfunction
+
 "
 " gitto#view#diff_file_with_hash
 " - path: string
@@ -56,7 +60,7 @@ function! gitto#view#diff_file_with_hash(path, info)
     return s:U.echomsgs(printf('`%s` is not found.', a:path))
   endif
 
-  let content = gitto#do('show#get')(a:info.hash, a:info.path)
+  let content = call(function('gitto#run'), ['show#get', a:info.hash, a:info.path])
   call s:put_content('tabnew', a:info, content)
   silent! diffthis
   normal! zM
@@ -65,14 +69,18 @@ function! gitto#view#diff_file_with_hash(path, info)
   normal! zM
 endfunction
 
+function! gitto#view#diff_file_with_hash_in_dir(dir, path, info)
+  return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#diff_file_with_hash', [a:path, a:info]))
+endfunction
+
 "
 " gitto#view#diff_hash_with_hash
 " - info1: { path: string; hash: string }
 " - info2: { path: string; hash: string }
 "
 function! gitto#view#diff_hash_with_hash(info1, info2)
-  let content1 = gitto#do('show#get')(a:info1.hash, a:info1.path)
-  let content2 = gitto#do('show#get')(a:info2.hash, a:info2.path)
+  let content1 = call(function('gitto#run'), ['show#get', a:info1.hash, a:info1.path])
+  let content2 = call(function('gitto#run'), ['show#get', a:info2.hash, a:info2.path])
 
   call s:put_content('tabnew', a:info2, content2)
   silent! diffthis
@@ -80,6 +88,10 @@ function! gitto#view#diff_hash_with_hash(info1, info2)
   call s:put_content('topleft vnew', a:info1, content1)
   silent! diffthis
   normal! zM
+endfunction
+
+function! gitto#view#diff_hash_with_hash_in_dir(dir, info1, info2)
+  return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#diff_hash_with_hash', [a:info1, a:info2]))
 endfunction
 
 function! s:put_content(open, info, content)

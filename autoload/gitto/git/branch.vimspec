@@ -9,7 +9,7 @@ Describe gitto#git#branch
   End
 
   It #get
-    let branches = gitto#do('branch#get')()
+    let branches = gitto#run('branch#get')
     call s:expect(branches).to_have_length(2)
     call s:expect(branches[0]['HEAD']).to_equal('*')
     call s:expect(branches[0]['refname']).to_equal('refs/heads/master')

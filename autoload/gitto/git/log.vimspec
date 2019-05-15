@@ -10,7 +10,7 @@ Describe gitto#git#log
   End
 
   It #get
-    let logs = gitto#do('log#get')()
+    let logs = gitto#run('log#get')
     call s:expect(logs).to_have_length(2)
     call s:expect(logs[0].subject).to_equal('Second commit')
     call s:expect(logs[0].commit_hash).to_equal('843e7a3bfc99e523713fbe48bec4391dd1d467e9')

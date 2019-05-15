@@ -11,7 +11,7 @@ Describe gitto#git#show
           \ "",
           \ "\" status",
           \ "if s:mode ==# 'status'",
-          \ "  for s:status in gitto#do('status#get')()",
+          \ "  for s:status in gitto#run('status#get')",
           \ "    echomsg s:status.status . ' | ' . s:status.path",
           \ "  endfor",
           \ "endif",
@@ -19,7 +19,7 @@ Describe gitto#git#show
   End
 
   It #get
-    let lines = gitto#do('show#get')('path', 'hash')
+    let lines = gitto#run('show#get', 'path', 'hash')
     call s:expect(lines).to_have_length(11)
   End
 

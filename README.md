@@ -3,14 +3,6 @@ git client in vim.
 
 ## API
 
-### gitto#do(feature)(...args) -> lambda
-You can call feature like this.
-
-```
-call gitto#do('status#get')()
-call gitto#do('status#reset')('/path/to/file')
-```
-
 ### gitto#run(feature, [...args]) -> results
 You can call feature like this.
 
@@ -19,9 +11,16 @@ call gitto#run('status#get')
 call gitto#run('status#reset', '/path/to/file')
 ```
 
-NOTE: You might not need this. It's used by neovim's remote plugin.
+### gitto#run_in_dir(feature, [...args]) -> results
+You can call feature like this.
+
+```
+call gitto#run_in_dir(dir, 'status#get')
+call gitto#run_in_dir(dir, 'status#reset', '/path/to/file')
+```
 
 ### gitto#view#commit(paths)
+### gitto#view#commit_in_dir(dir, paths)
 You can open commit view in other tabpage.
 
 ```
@@ -29,6 +28,7 @@ call gitto#view#commit(['/path/to/commit1', '/path/to/commit2'])
 ```
 
 ### gitto#view#diff_file_with_hash(path, info)
+### gitto#view#diff_file_with_hash_in_dir(dir, path, info)
 You can open vimdiff view in other tabpage.
 
 > `info` is `{ hash: string; path: string }`
@@ -38,6 +38,7 @@ call gitto#view#diff_file_with_hash('/path/to/diff', { 'hash': 'HEAD', 'path': '
 ```
 
 ### gitto#view#diff_hash_with_hash(info1, info2)
+### gitto#view#diff_hash_with_hash_in_dir(dir, info1, info2)
 You can open vimdiff view in other tabpage.
 
 > `info` is `{ hash: string; path: string }`
@@ -87,3 +88,4 @@ endfunction
 # TODO
 - implements more feature.
 - error handling?
+

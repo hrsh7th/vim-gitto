@@ -37,7 +37,7 @@ endfunction
 " get current branch
 "
 function! gitto#git#branch#current()
-  let branches = gitto#do('branch#get')()
+  let branches = gitto#run('branch#get')
   let branches = filter(branches, { k, v -> v.current })
   return get(branches, 0, {})
 endfunction

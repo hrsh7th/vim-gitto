@@ -11,7 +11,7 @@ Describe gitto#git#status
   End
 
   It #get
-    let statuses = gitto#do('status#get')()
+    let statuses = gitto#run('status#get')
     call s:expect(statuses).to_have_length(3)
     call s:expect(statuses[0].status).to_equal('M ')
     call s:expect(statuses[0].path).to_equal(gitto#test#plugin_dir('./gitto.vim'))

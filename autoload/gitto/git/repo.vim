@@ -14,21 +14,21 @@ function! gitto#git#repo#fetch(...)
 endfunction
 
 function! gitto#git#repo#push(...)
-  let current = gitto#do('branch#current')()
+  let current = gitto#run('branch#current')
   if empty(current)
     return s:U.echomsgs("current branch can't detect.")
   endif
-  call call(gitto#do('branch#push'), [current] + a:000)
+  call call(function('gitto#run'), ['branch#push', current] + a:000)
 endfunction
 
 function! gitto#git#repo#pull(...)
-  let current = gitto#do('branch#current')()
+  let current = gitto#run('branch#current')
   if empty(current)
     return s:U.echomsgs("current branch can't detect.")
   endif
   if !strlen(current.upstream)
     return s:U.echomsgs('should set upstream branch.')
   endif
-  call call(gitto#do('branch#pull'), [current] + a:000)
+  call call(function('gitto#run'), ['branch#pull', current] + a:000)
 endfunction
 
