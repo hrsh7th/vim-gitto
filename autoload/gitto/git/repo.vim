@@ -10,7 +10,7 @@ endfunction
 
 function! gitto#git#repo#fetch(...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git fetch %s', opts))
+  call gitto#system_echo('git fetch %s', opts)
 endfunction
 
 function! gitto#git#repo#push(...)

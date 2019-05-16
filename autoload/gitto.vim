@@ -27,8 +27,16 @@ function! gitto#system(cmd, ...)
   endif
 
   let command = call('printf', [a:cmd] + s:U.shellargs(a:000))
-  let output = split(system(command), "\n")
+  let output = split(system(command), "[\n\r]")
   let output = map(output, { k, v -> s:U.chomp(v) })
   return output
+endfunction
+
+function! gitto#system_echo(cmd, ...)
+  let command = call('printf', [a:cmd] + s:U.shellargs(a:000))
+  echo ' '
+  echo ' '
+  call s:U.echomsgs(['$ ' . command] + function('gitto#system', [a:cmd] + a:000)(), v:false)
+  echo ' '
 endfunction
 

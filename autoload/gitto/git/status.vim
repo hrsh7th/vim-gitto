@@ -46,6 +46,6 @@ function! s:per_status(action, paths, opts)
   if !len(paths)
     return s:U.echomsgs(printf('nothing to %s', a:action))
   endif
-  call s:U.echomsgs(gitto#system('git %s %s -- %s', a:action, a:opts, paths))
+  call gitto#system_echo('git %s %s -- %s', a:action, a:opts, paths)
 endfunction
 

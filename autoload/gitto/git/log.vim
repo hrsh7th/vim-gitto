@@ -32,6 +32,6 @@ endfunction
 "
 function! gitto#git#log#reset(hash, ...)
   let opts = get(a:000, 0, {})
-  call s:U.echomsgs(gitto#system('git reset %s %s', opts, a:hash))
+  call gitto#system_echo('git reset %s %s', opts, a:hash)
 endfunction
 

@@ -46,21 +46,21 @@ endfunction
 " `git checkout %name`
 "
 function! gitto#git#branch#checkout(name)
-  call s:U.echomsgs(gitto#system('git checkout %s', a:name))
+  call gitto#system_echo('git checkout %s', a:name)
 endfunction
 
 "
 " `git branch %name`
 "
 function! gitto#git#branch#new(name, ...)
-  call s:U.echomsgs(gitto#system('git branch %s', a:name))
+  call gitto#system_echo('git branch %s', a:name)
 endfunction
 
 "
 " `git branch -m %s %s`
 "
 function! gitto#git#branch#rename(name, new_name)
-  call s:U.echomsgs(gitto#system('git branch -m %s %s', a:name, a:new_name))
+  call gitto#system_echo('git branch -m %s %s', a:name, a:new_name)
 endfunction
 
 "
@@ -68,9 +68,9 @@ endfunction
 "
 function! gitto#git#branch#delete(branch, ...)
   if a:branch['local']
-    call s:U.echomsgs(gitto#system('git branch -D %s', a:branch['name']))
+    call gitto#system_echo('git branch -D %s', a:branch['name'])
   else
-    call s:U.echomsgs(gitto#system('git push %s :%s', a:branch['remote'], a:branch['name']))
+    call gitto#system_echo('git push %s :%s', a:branch['remote'], a:branch['name'])
   endif
 endfunction
 
@@ -79,12 +79,12 @@ endfunction
 "
 function! gitto#git#branch#merge(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system(
+  call gitto#system_echo(
         \   'git merge %s %s',
         \   opts,
         \   a:branch['local']
         \     ? a:branch['name']
-        \     : a:branch['remote'] . '/' . a:branch['name'])
+        \     : a:branch['remote'] . '/' . a:branch['name']
         \ )
 endfunction
 
@@ -93,12 +93,12 @@ endfunction
 "
 function! gitto#git#branch#rebase(branch, ...)
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system(
+  call gitto#system_echo(
         \   'git rebase %s %s',
         \   opts,
         \   a:branch['local']
         \     ? a:branch['name']
-        \     : a:branch['remote'] . '/' . a:branch['name'])
+        \     : a:branch['remote'] . '/' . a:branch['name']
         \ )
 endfunction
 
@@ -110,7 +110,7 @@ function! gitto#git#branch#push(branch, ...)
   if !a:branch['local']
     return s:U.echomsgs("can't push remote branch")
   endif
-  call s:U.echomsgs(gitto#system('git push %s %s %s', opts, a:branch.remote, a:branch.name))
+  call gitto#system_echo('git push %s %s %s', opts, a:branch.remote, a:branch.name)
 endfunction
 
 "
@@ -124,7 +124,7 @@ function! gitto#git#branch#pull(branch, ...)
     return s:U.echomsgs('should set upstream branch')
   endif
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git pull %s %s %s', opts, a:branch.remote, a:branch.name))
+  call gitto#system_echo('git pull %s %s %s', opts, a:branch.remote, a:branch.name)
 endfunction
 
 "
@@ -135,11 +135,11 @@ function! gitto#git#branch#fetch(branch, ...)
     return s:U.echomsgs('should set upstream branch')
   endif
   let opts = extend(get(a:000, 0, {}), {})
-  call s:U.echomsgs(gitto#system('git fetch %s %s %s:%s',
+  call gitto#system_echo('git fetch %s %s %s:%s',
         \ opts,
         \ a:branch.remote,
         \ a:branch.name,
-        \ s:refname2name(a:branch.upstream)))
+        \ s:refname2name(a:branch.upstream))
 endfunction
 
 "
@@ -149,7 +149,7 @@ function! gitto#git#branch#set_upstream_to(branch, ...)
   let opts = extend(get(a:000, 0, {}), {
         \ '--set-upstream-to': a:branch['remote'] . '/' . a:branch['name']
         \ })
-  call s:U.echomsgs(gitto#system('git branch %s', opts))
+  call gitto#system_echo('git branch %s', opts)
 endfunction
 
 "
