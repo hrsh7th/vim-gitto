@@ -36,7 +36,8 @@ function! gitto#system_echo(cmd, ...)
   let command = call('printf', [a:cmd] + s:U.shellargs(a:000))
   echo ' '
   echo ' '
-  call s:U.echomsgs(['$ ' . command] + function('gitto#system', [a:cmd] + a:000)(), v:false)
+  echo '$ ' . command
+  call s:U.echomsgs(function('gitto#system', [a:cmd] + a:000)(), v:false)
   echo ' '
 endfunction
 
