@@ -11,7 +11,7 @@ call gitto#run('status#get')
 call gitto#run('status#reset', '/path/to/file')
 ```
 
-### gitto#run_in_dir(feature, [...args]) -> results
+### gitto#run_in_dir(dir, feature, [...args]) -> results
 You can call feature like this.
 
 ```
