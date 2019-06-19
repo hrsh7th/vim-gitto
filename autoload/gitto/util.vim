@@ -180,7 +180,11 @@ endfunction
 " status.parse_path
 function! s:U.status.parse_path(state, path)
   if a:state =~# 'R'
-    return split(a:path, ' -> ')[1]
+    if a:path =~# '->'
+      return split(a:path, ' -> ')[1]
+    elseif a:path =~# '\t'
+      return split(a:path, '\t')[1]
+    endif
   endif
   return a:path
 endfunction
