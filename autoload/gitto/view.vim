@@ -56,10 +56,6 @@ endfunction
 " - info: { path: string; hash: string }
 "
 function! gitto#view#diff_file_with_hash(path, info)
-  if !filereadable(a:path)
-    return s:U.echomsgs(printf('`%s` is not found.', a:path))
-  endif
-
   let content = call(function('gitto#run'), ['show#get', a:info.hash, a:info.path])
   call s:put_content('tabnew', a:info, content)
   silent! diffthis
