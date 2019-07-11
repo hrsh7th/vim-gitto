@@ -169,10 +169,11 @@ let s:U.status = {}
 " status.parse
 function! s:U.status.parse(line, status_offset, path_offset)
   let status = strpart(a:line, 0, a:status_offset)
-  let path = strpart(a:line, a:path_offset)
+  let paths = s:U.status.parse_path(status, strpart(a:line, a:path_offset))
   return {
         \ 'status': status,
-        \ 'path': s:U.absolute(s:U.status.parse_path(status, path)),
+        \ 'path': s:U.absolute(paths[0]),
+        \ 'path_before_rename': get(paths, 1, ''),
         \ 'raw': a:line
         \ }
 endfunction
@@ -181,12 +182,12 @@ endfunction
 function! s:U.status.parse_path(state, path)
   if a:state =~# 'R'
     if a:path =~# '->'
-      return split(a:path, ' -> ')[1]
+      return reverse(split(a:path, ' -> '))
     elseif a:path =~# '\t'
-      return split(a:path, '\t')[1]
+      return reverse(split(a:path, '\t'))
     endif
   endif
-  return a:path
+  return [a:path]
 endfunction
 
 function! gitto#util#get()
