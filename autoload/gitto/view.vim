@@ -3,6 +3,9 @@ let s:U = gitto#util#get()
 let g:gitto#view#config = get(g:, 'gitto#view#config', {})
 let g:gitto#view#config.commit_msg_separator = get(g:gitto#view#config, 'commit_msg_separator', '#####')
 
+"
+" @param {string[]} paths
+"
 function! gitto#view#commit(paths)
   if len(a:paths) <= 0
     return s:U.echomsgs('nothing to commit')
@@ -46,14 +49,17 @@ function! gitto#view#commit(paths)
   augroup END
 endfunction
 
+"
+" @param {string} dir
+" @param {string[]} paths
+"
 function! gitto#view#commit_in_dir(dir, paths)
   return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#commit', [a:paths]))
 endfunction
 
 "
-" gitto#view#diff_file_with_hash
-" - path: string
-" - info: { path: string; hash: string }
+" @param {string} path
+" @param {{ hash: string; path: string }} info
 "
 function! gitto#view#diff_file_with_hash(path, info)
   let content = call(function('gitto#run'), ['show#get', a:info.hash, a:info.path])
@@ -65,14 +71,18 @@ function! gitto#view#diff_file_with_hash(path, info)
   normal! zM
 endfunction
 
+"
+" @param {string} dir
+" @param {string} path
+" @param {{ hash: string; path: string }} info
+"
 function! gitto#view#diff_file_with_hash_in_dir(dir, path, info)
   return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#diff_file_with_hash', [a:path, a:info]))
 endfunction
 
 "
-" gitto#view#diff_hash_with_hash
-" - info1: { path: string; hash: string }
-" - info2: { path: string; hash: string }
+" @param {{ hash: string; path: string }} info1
+" @param {{ hash: string; path: string }} info2
 "
 function! gitto#view#diff_hash_with_hash(info1, info2)
   let content1 = call(function('gitto#run'), ['show#get', a:info1.hash, a:info1.path])
@@ -86,13 +96,23 @@ function! gitto#view#diff_hash_with_hash(info1, info2)
   normal! zM
 endfunction
 
+"
+" @param {string} dir
+" @param {{ hash: string; path: string }} info1
+" @param {{ hash: string; path: string }} info2
+"
 function! gitto#view#diff_hash_with_hash_in_dir(dir, info1, info2)
   return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#diff_hash_with_hash', [a:info1, a:info2]))
 endfunction
 
+"
+" @param {string} open
+" @param {{ hash: string; path: string }} info
+" @param {string} content
+"
 function! s:put_content(open, info, content)
   call s:U.exec('%s', a:open)
-  call s:U.exec('file! %s', fnameescape(printf('%s:%s', a:info.hash, a:info.path)))
+  call s:U.exec('file! %s', fnameescape(substitute(a:info.path, '\(\.[^\.]\+\)$', '~' . a:info.hash . '\1', 'g')))
   silent! put!=a:content | $delete
   setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
   filetype detect
