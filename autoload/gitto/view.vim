@@ -69,6 +69,7 @@ function! gitto#view#diff_file_with_hash(path, info)
   call s:U.exec('topleft vsplit %s', a:path)
   silent! diffthis
   normal! zM
+  normal! gg
 endfunction
 
 "
@@ -94,6 +95,7 @@ function! gitto#view#diff_hash_with_hash(info1, info2)
   call s:put_content('topleft vnew', a:info1, content1)
   silent! diffthis
   normal! zM
+  normal! gg
 endfunction
 
 "
