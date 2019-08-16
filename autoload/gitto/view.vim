@@ -63,12 +63,15 @@ endfunction
 "
 function! gitto#view#diff_file_with_hash(path, info)
   let content = call(function('gitto#run'), ['show#get', a:info.hash, a:info.path])
+
   call s:put_content('tabnew', a:info, content)
   silent! diffthis
   normal! zM
+
   call s:U.exec('topleft vsplit %s', a:path)
   silent! diffthis
   normal! zM
+
   normal! gg
 endfunction
 
@@ -92,9 +95,11 @@ function! gitto#view#diff_hash_with_hash(info1, info2)
   call s:put_content('tabnew', a:info2, content2)
   silent! diffthis
   normal! zM
+
   call s:put_content('topleft vnew', a:info1, content1)
   silent! diffthis
   normal! zM
+
   normal! gg
 endfunction
 
@@ -114,7 +119,12 @@ endfunction
 "
 function! s:put_content(open, info, content)
   call s:U.exec('%s', a:open)
-  call s:U.exec('file! %s', fnameescape(substitute(a:info.path, '\(\.[^\.]\+\)$', '~' . a:info.hash . '\1', 'g')))
+  try
+    call s:U.exec('file! %s', fnameescape(substitute(a:info.path, '\(\.[^\.]\+\)$', '~' . a:info.hash . '\1', 'g')))
+  catch
+    call s:U.exec('edit %s', fnameescape(substitute(a:info.path, '\(\.[^\.]\+\)$', '~' . a:info.hash . '\1', 'g')))
+    return
+  endtry
   silent! put!=a:content | $delete
   setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
   filetype detect
