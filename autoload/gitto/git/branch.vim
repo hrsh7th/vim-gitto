@@ -43,13 +43,6 @@ function! gitto#git#branch#current()
 endfunction
 
 "
-" `git checkout %name`
-"
-function! gitto#git#branch#checkout(name)
-  call gitto#system_echo('git checkout %s', a:name)
-endfunction
-
-"
 " `git branch %name`
 "
 function! gitto#git#branch#new(name, ...)
@@ -150,6 +143,19 @@ function! gitto#git#branch#set_upstream_to(branch, ...)
         \ '--set-upstream-to': a:branch['remote'] . '/' . a:branch['name']
         \ })
   call gitto#system_echo('git branch %s', opts)
+endfunction
+
+"
+" `git checkout -b %name %origin/%name`
+" or
+" `git checkout %name`
+"
+function! gitto#git#branch#checkout(branch)
+  if a:branch['local']
+    call gitto#system_echo('git checkout %s', a:branch['name'])
+  else
+    call gitto#system_echo('git checkout -b %s %s/%s', a:branch['name'], a:branch['remote'], a:branch['name'])
+  endif
 endfunction
 
 "
