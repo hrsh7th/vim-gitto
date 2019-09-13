@@ -24,8 +24,7 @@ function! gitto#view#commit(paths)
             \   s:U.run_in_dir(
             \     gitto#root_dir(),
             \     { -> gitto#system('git commit -F %s -- %s', expand('%:p'), b:gitto_commit.paths) }
-            \   ),
-            \   0
+            \   )
             \ )
     endif
     bdelete!
