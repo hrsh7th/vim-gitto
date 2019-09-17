@@ -125,7 +125,7 @@ function! s:put_content(open, info, content)
     return
   endtry
   silent! put!=a:content | $delete
-  setlocal bufhidden=delete buftype=nofile nobuflisted noswapfile nomodifiable
+  setlocal bufhidden=hide buftype=nofile nobuflisted noswapfile nomodifiable nomodified
   filetype detect
 endfunction
 
