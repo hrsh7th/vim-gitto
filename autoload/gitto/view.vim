@@ -6,9 +6,28 @@ let g:gitto#view#config.commit_msg_separator = get(g:gitto#view#config, 'commit_
 "
 " @param {string[]} paths
 "
-function! gitto#view#commit(paths)
+function! gitto#view#commit(paths, amend)
   if len(a:paths) <= 0
     return s:U.echomsgs('nothing to commit')
+  endif
+
+  " If amend enabled, enter commit step immediately.
+  if a:amend
+    let log = get(s:U.run_in_dir(gitto#root_dir(), { -> gitto#run('log#get', { '--max-count': 1 }) }), 0, {})
+    let msg = input('message: ', get(log, 'subject', ''))
+    if s:U.yes_or_no('commit?')
+      call s:U.echomsgs(
+            \   s:U.run_in_dir(
+            \     gitto#root_dir(),
+            \     { -> gitto#system('git commit %s -m "%s" -- %s',
+            \       a:amend ? '--amend' : '',
+            \       substitute(msg, '"', '\\"', 'g'),
+            \       a:paths)
+            \     }
+            \   )
+            \ )
+    endif
+    return
   endif
 
   " open buffer.
@@ -17,13 +36,18 @@ function! gitto#view#commit(paths)
 
   " initialize vars.
   let b:gitto_commit = {}
+  let b:gitto_commit.amend = a:amend
   let b:gitto_commit.paths = map(a:paths, { k, v -> s:U.relative(v, gitto#root_dir()) })
   function! b:gitto_commit.commit()
     if s:U.yes_or_no('commit?')
       call s:U.echomsgs(
             \   s:U.run_in_dir(
             \     gitto#root_dir(),
-            \     { -> gitto#system('git commit -F %s -- %s', expand('%:p'), b:gitto_commit.paths) }
+            \     { -> gitto#system('git commit %s -F %s -- %s',
+            \       b:gitto_commit.amend ? '--amend' : '',
+            \       expand('%:p'),
+            \       b:gitto_commit.paths)
+            \     }
             \   )
             \ )
     endif
@@ -35,7 +59,9 @@ function! gitto#view#commit(paths)
   put=g:gitto#view#config.commit_msg_separator
   put=s:U.run_in_dir(
         \   gitto#root_dir(),
-        \   { -> gitto#system('git commit --dry-run --quiet -v -- %s', b:gitto_commit.paths) }
+        \   { -> gitto#system('git commit --dry-run -v -- %s',
+        \     b:gitto_commit.paths)
+        \   }
         \ )
   noautocmd write!
   call cursor(1, 1)
@@ -52,8 +78,8 @@ endfunction
 " @param {string} dir
 " @param {string[]} paths
 "
-function! gitto#view#commit_in_dir(dir, paths)
-  return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#commit', [a:paths]))
+function! gitto#view#commit_in_dir(dir, paths, amend)
+  return s:U.run_in_dir(gitto#root_dir(a:dir), function('gitto#view#commit', [a:paths, a:amend]))
 endfunction
 
 "
