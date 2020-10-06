@@ -31,7 +31,7 @@ function! gitto#view#commit(paths, amend)
   endif
 
   " open buffer.
-  call s:U.exec('tabedit %s', join([gitto#root_dir(), '.git', 'COMMIT_EDITMSG'], '/'))
+  call s:U.exec('noautocmd tabedit %s', join([gitto#root_dir(), '.git', 'COMMIT_EDITMSG'], '/'))
   call s:U.exec('set filetype=gitcommit')
 
   " initialize vars.
