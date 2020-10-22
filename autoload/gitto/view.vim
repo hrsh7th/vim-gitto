@@ -55,14 +55,17 @@ function! gitto#view#commit(paths, amend)
   endfunction
 
   " initialize buffer.
-  silent % delete _
-  put=g:gitto#view#config.commit_msg_separator
-  put=s:U.run_in_dir(
+  let l:verbose = s:U.run_in_dir(
         \   gitto#root_dir(),
         \   { -> gitto#system('git commit --dry-run -v -- %s',
         \     b:gitto_commit.paths)
         \   }
         \ )
+  let l:verbose = type(l:verbose) == type([]) ? l:verbose : split(l:verbose, "\n")
+  let l:verbose = map(l:verbose, { _, line -> strcharpart(line, 0, 500) })
+  silent % delete _
+  put=g:gitto#view#config.commit_msg_separator
+  put=l:verbose
   noautocmd write!
   call cursor(1, 1)
 
